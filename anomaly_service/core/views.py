@@ -8,7 +8,6 @@ from sklearn.ensemble import IsolationForest
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from supabase import create_client, Client
-from google import genai
 from django.core.mail import EmailMultiAlternatives
 from email.mime.image import MIMEImage
 import requests
@@ -36,16 +35,16 @@ pipe = StableDiffusionPipeline.from_pretrained(
 pipe.enable_attention_slicing()
 pipe.enable_vae_slicing()
 # --- Configuration ---
-SUPABASE_URL = "https://ubvcncqceakcmosxjkpx.supabase.co"
-SUPABASE_KEY = "sb_publishable_mXdogYpuflKU5JDneBpQNw_fJfZZjlH"
-GOOGLE_API_KEY = "AIzaSyB-VI6h7yclhkl9rrchlCJfzNmAdh7KyQQ"
+SUPABASE_URL = "<SUPABASE_URL>"
+SUPABASE_KEY = "<SUPABASE_APIKEY>"
+
 
 headers = {
     "apikey": SUPABASE_KEY,
     "Authorization": f"Bearer {SUPABASE_KEY}",
     "Content-Type": "application/json"
 }
-STABILITY_API_KEY = "sk-BsxPMK8XEJQy3ypJ8yStr28nMKbGZRnEFNcL6fcdYZ9mvap9"
+
 
     
 def fetch_supabase_last_row(table):
@@ -193,8 +192,8 @@ def automate_ad():
 def advertise(id):
     root = MIMEMultipart('related')
     root['Subject'] = "Our New Product Just Launched! This Price Just For You"
-    root['From'] = "saymyname.hacksym@gmail.com"
-    root['To'] = "customer.hacksymm@gmail.com"
+    root['From'] = "<AGENT_MAIL>"
+    root['To'] = "<CUSTOMER_MAILS>"
 
     html = """
     <html>
@@ -219,8 +218,8 @@ def advertise(id):
     connection = get_connection()
     connection.open()
     connection.connection.sendmail(
-        "saymyname.hacksym@gmail.com",
-        ["customer.hacksymm@gmail.com"],
+        "<AGENT_MAIL>",
+        ["<CUSTOMER MAILS>"],
         root.as_string(),
     )
     connection.close()
@@ -229,7 +228,7 @@ def send_html_email(subject, text_body, html_body, to):
     msg = EmailMultiAlternatives(
         subject=subject,
         body=text_body,
-        from_email="saymyname.hacksym@gmail.com",
+        from_email="<AGENT_MAIL>",
         to=to
     )
     msg.attach_alternative(html_body, "text/html")
@@ -410,7 +409,7 @@ def notify(action,all_actions):
         subject,
         action["message"],  # Plain text fallback
         admin_html,
-        ["businesshacksymmetric@gmail.com"]
+        ["<BUSINESS_OWNER_MAIL>"]
     )
     
     # Customer notifications
@@ -461,7 +460,7 @@ def notify(action,all_actions):
             subject,
             plain_text,
             customer_html,
-            ["customer.hacksymm@gmail.com"]
+            ["<CUSTOMER_MAILS>"]
         )
         
     elif action['type'] == 'price_change_anomaly':
@@ -513,7 +512,7 @@ def notify(action,all_actions):
             subject,
             plain_text,
             customer_html,
-            ["customer.hacksymm@gmail.com"]
+           ["<CUSTOMER_MAILS>"]
         )
 # ---------- ML ANOMALY DETECTION ----------
 
@@ -957,3 +956,4 @@ def event_trigger(request):
         "status": "ok",
         "actions": actions
     })
+
