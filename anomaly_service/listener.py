@@ -8,8 +8,8 @@ django.setup()
 
 from core.views import run_ml_proactive_agent, notify
 
-SUPABASE_URL = "https://ubvcncqceakcmosxjkpx.supabase.co"
-SUPABASE_KEY = "sb_publishable_mXdogYpuflKU5JDneBpQNw_fJfZZjlH"
+SUPABASE_URL = "<ENTER_SUPABASE_URL>"
+SUPABASE_KEY = "<ENTER_SUPABASE_API_KEY>"
 
 
 # ---------- real async worker ----------
@@ -80,3 +80,4 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         print("\n👋 Listener stopped manually")
+
