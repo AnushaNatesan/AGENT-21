@@ -1,0 +1,353 @@
+// ========================================
+// ADVANCED FEATURES JAVASCRIPT
+// ========================================
+
+// 1. SELF-HEALING SQL RE-SENSING
+async function executeSelfHealingSQL() {
+const query = document.getElementById('sql-query-input')?.value?.trim();
+if (!query) {
+alert('Please enter a SQL query');
+return;
+}
+const resultsDiv = document.getElementById('sql-healing-results');
+const logDiv = document.getElementById('sql-healing-log');
+const dataDiv = document.getElementById('sql-data-results');
+if (resultsDiv) resultsDiv.style.display = 'block';
+if (logDiv) {
+logDiv.innerHTML = '<div class="log-entry"><span class="log-timestamp">' +
+        new Date().toLocaleTimeString() + '</span> Executing query with self-healing...</div>';
+}
+try {
+const response = await fetch('/api/advanced/sql/healing/', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ query })
+});
+const result = await response.json();
+if (logDiv) {
+logDiv.innerHTML = '';
+logDiv.innerHTML += '<div class="log-entry"><span class="log-timestamp">' +
+        new Date().toLocaleTimeString() + '</span> Attempts: ' + result.attempts + '</div>';
+if (result.healing_log && result.healing_log.length > 0) {
+result.healing_log.forEach(log => {
+const color = log.action === 'rewritten' ? '#10b981' : (log.error ? '#ef4444' : '#3b82f6');
+const entry = '<div class="log-entry" style="border-left-color: ' + color + 
+                        ';"><span class="log-timestamp">Attempt ' + log.attempt + '</span> ' +
+    log.action + ': ' + (log.error || log.new_query || log.message || '') + '</div>';
+logDiv.innerHTML += entry;
+});
+}
+if (result.success) {
+logDiv.innerHTML += '<div class="log-entry" style="border-left-color: #10b981;"><span class="log-timestamp">' +
+        new Date().toLocaleTimeString() + '</span> ✅ Query executed successfully! Retrieved ' +
+    result.data.length + ' rows.</div>';
+if (result.data.length > 0 && dataDiv) {
+dataDiv.innerHTML = '<h4 style="margin-bottom: 1rem;">Query Results:</h4>' +
+createDataTable(result.data);
+}
+} else {
+logDiv.innerHTML += '<div class="log-entry" style="border-left-color: #ef4444;"><span class="log-timestamp">' +
+        new Date().toLocaleTimeString() + '</span> ❌ Query failed: ' + result.error + '</div>';
+}
+}
+if (typeof addInsightLog === 'function') {
+addInsightLog('🔧 SQL HEALER: ' + (result.success ? 'Success' : 'Failed') +
+' after ' + result.attempts + ' attempts');
+}
+} catch (error) {
+if (logDiv) {
+logDiv.innerHTML += '<div class="log-entry" style="border-left-color: #ef4444;"><span class="log-timestamp">' +
+        new Date().toLocaleTimeString() + '</span> Error: ' + error.message + '</div>';
+}
+}
+if (window.lucide) lucide.createIcons();
+}
+
+function createDataTable(data) {
+if (!data || data.length === 0) return '<p>No data</p>';
+const keys = Object.keys(data[0]);
+let html = '<div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">' +
+        '<thead>
+            <tr>';
+                keys.forEach(key => {
+                html += '<th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid var(--border); ' + 
+            'font-weight: 800; color: var(--accent);">' + key + '</th>';
+                });
+                html += '</tr>
+        </thead>
+        <tbody>';
+            data.slice(0, 50).forEach(row => {
+            html += '<tr>';
+                keys.forEach(key => {
+                html += '<td style="padding: 0.75rem; border-bottom: 1px solid var(--border);">' +
+                    (row[key] !== null ? row[key] : 'NULL') + '</td>';
+                });
+                html += '</tr>';
+            });
+            html += '</tbody>
+    </table>
+</div>';
+if (data.length > 50) {
+html += '<p style="margin-top: 1rem; color: var(--text-dim); font-size: 0.8rem;">Showing first 50 of ' +
+    data.length + ' rows</p>';
+}
+return html;
+}
+
+// 2. AGENTIC BOARDROOM
+const situationTypeEl = document.getElementById('situation-type');
+if (situationTypeEl) {
+situationTypeEl.addEventListener('change', function () {
+const customInput = document.getElementById('custom-situation-input');
+if (customInput) customInput.style.display = this.value === 'custom' ? 'block' : 'none';
+});
+}
+
+async function conveneBoardroom() {
+const situationType = document.getElementById('situation-type')?.value;
+if (!situationType) return;
+let situation = {};
+if (situationType === 'custom') {
+const description = document.getElementById('situation-description')?.value?.trim();
+if (!description) { alert('Please describe the situation'); return; }
+situation = { type: 'custom', description: description };
+} else {
+const situations = {
+'weather_risk': { type: 'Weather Crisis', description: 'Category 8/10 hurricane approaching Florida Distribution Center.
+48h to impact.', severity: 8 },
+'supply_disruption': { type: 'Supply Disruption', description: 'Key supplier factory failure. 30% raw material deficit.
+2-week recovery.', impact_percent: 30 },
+'demand_surge': { type: 'Demand Surge', description: 'Viral campaign resulted in 300% order volume spike. Stock
+critical.', surge_percent: 300 },
+'competitor_action': { type: 'Market Threat', description: 'Primary competitor initiated 40% price reduction
+offensive.', price_cut: 40 }
+};
+situation = situations[situationType];
+}
+const resultsDiv = document.getElementById('boardroom-results');
+if (resultsDiv) resultsDiv.style.display = 'block';
+const loadingHtml = '<div style="padding: 2rem; text-align: center; color: var(--text-dim);">' +
+    '<i data-lucide="loader-2" class="spin"></i> Synchronizing Agents...</div>';
+const logEl = document.getElementById('logistics-analysis');
+const finEl = document.getElementById('finance-analysis');
+const execEl = document.getElementById('executive-decision');
+if (logEl) logEl.innerHTML = loadingHtml;
+if (finEl) finEl.innerHTML = loadingHtml;
+if (execEl) execEl.innerHTML = loadingHtml;
+if (window.lucide) lucide.createIcons();
+try {
+const response = await fetch('/api/advanced/boardroom/convene/', {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({situation})
+});
+const session = await response.json();
+const logistics = session.logistics_analysis;
+const logConf = (logistics.confidence * 100).toFixed(0);
+if (logEl) {
+logEl.innerHTML = '<div class="agent-report">
+    <div style="display: flex; justify-content: space-between; ' + 
+                'margin-bottom: 1rem;"><span class="badge"
+            style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">' +
+            'OPERATIONAL ADVISORY</span><span style="font-size: 0.75rem; color: var(--text-dim);">Conf: ' +
+            logConf + '%</span></div>
+    <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); ' + 
+                'border-radius: 2px; margin-bottom: 1.5rem;">
+        <div style="width: ' + logConf + '%; height: 100%; ' + 
+                'background: #3b82f6; border-radius: 2px;"></div>
+    </div>
+    <p style="font-size: 0.9rem; line-height: 1.5; ' + 
+                'margin-bottom: 1.5rem; color: var(--text);">' + logistics.assessment + '</p>
+    <div>' +
+        '<div style="font-size: 0.7rem; font-weight: 800; color: var(--text-dim); text-transform: uppercase; ' + 
+                'margin-bottom: 0.75rem;">Recommendations</div>' + logistics.recommendations.map(r =>
+        '<div style="display: flex; gap: 10px; align-items: flex-start; margin-bottom: 0.5rem; font-size: 0.85rem;">' +
+            '<i data-lucide="check-circle-2" size="14" style="color: #3b82f6; margin-top: 2px;"></i>' +
+            '<span>' + r + '</span></div>').join('') + '</div>
+</div>';
+}
+const finance = session.finance_analysis;
+const finConf = (finance.confidence * 100).toFixed(0);
+if (finEl) {
+finEl.innerHTML = '<div class="agent-report">
+    <div style="display: flex; justify-content: space-between; ' + 
+                'margin-bottom: 1rem;"><span class="badge" style="background: rgba(251, 191, 36, 0.2); ' + 
+                'color: #fbbf24;">FISCAL ANALYSIS</span><span style="font-size: 0.75rem; color: var(--text-dim);">' +
+            'Conf: ' + finConf + '%</span></div>
+    <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); ' + 
+                'border-radius: 2px; margin-bottom: 1.5rem;">
+        <div style="width: ' + finConf + '%; height: 100%; ' + 
+                'background: #f59e0b; border-radius: 2px;"></div>
+    </div>
+    <p style="font-size: 0.9rem; line-height: 1.5; ' + 
+                'margin-bottom: 1.5rem; color: var(--text);">' + finance.cost_analysis + '</p>' +
+    '<div style="padding: 0.75rem; background: rgba(0,0,0,0.2); border-radius: 8px;">' +
+        '<div style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">Revenue Impact</div>' +
+        '<div style="font-weight: 700; color: #f87171;">' + finance.revenue_impact + '</div>
+    </div>
+</div>';
+}
+const decision = session.executive_decision;
+const dType = decision.decision.toUpperCase();
+const dColor = dType.includes('APPROVE') ? '#10b981' : (dType.includes('PIVOT') ? '#fbbf24' : '#ef4444');
+if (execEl) {
+execEl.innerHTML = '<div style="padding: 2rem; background: rgba(255,255,255,0.02); border-radius: 16px; ' + 
+                'border: 1px solid rgba(255,255,255,0.05);">
+    <div
+        style="padding: 1rem; background: ' + dColor + 
+                '20; border: 2px solid ' + dColor + '; border-radius: 12px; text-align: center; margin-bottom: 1.5rem;">
+        ' +
+        '<div style="font-size: 2rem; font-weight: 900; color: ' + dColor + ';">' + dType + '</div>
+    </div>' +
+    '<p style="font-size: 1.1rem; color: var(--text); font-weight: 500;">"' + decision.rationale + '"</p>
+</div>';
+}
+if (typeof addInsightLog === 'function') addInsightLog('👔 BOARDROOM: [' + dType + '] - Strategy locked for ' +
+situation.type);
+loadBoardroomHistory();
+} catch (error) {
+console.error('Boardroom Error:', error);
+if (logEl) logEl.innerHTML = '<p style="color: #ef4444;">Error: ' + error.message + '</p>';
+if (finEl) finEl.innerHTML = '<p style="color: #ef4444;">Error: ' + error.message + '</p>';
+if (execEl) execEl.innerHTML = '<p style="color: #ef4444;">Error: ' + error.message + '</p>';
+}
+if (window.lucide) lucide.createIcons();
+}
+
+async function loadBoardroomHistory() {
+try {
+const response = await fetch('/api/advanced/boardroom/history/?limit=5');
+const data = await response.json();
+const listDiv = document.getElementById('boardroom-sessions-list');
+if (listDiv && data.sessions && data.sessions.length > 0) {
+listDiv.innerHTML = data.sessions.map(s => '<div class="activity-item" style="margin-bottom: 1rem;">' +
+    '<div class="activity-time">' + new Date(s.timestamp).toLocaleString() + '</div>' +
+    '<div class="activity-content">
+        <div class="activity-title">' + s.situation.type + ': ' +
+            s.executive_decision.decision.toUpperCase() + '</div>
+        <div class="activity-desc">' +
+            s.situation.description + '</div>
+    </div>
+</div>').join('');
+} else if (listDiv) {
+listDiv.innerHTML = '<p style="color: var(--text-dim);">No sessions yet</p>';
+}
+} catch (error) { console.error('Error loading boardroom history:', error); }
+}
+
+// 3. DIGITAL TWIN SIMULATION
+async function runDigitalTwinSimulation() {
+const materialPrice = parseFloat(document.getElementById('sim-material-price')?.value) || 0;
+const demandSurge = parseFloat(document.getElementById('sim-demand-surge')?.value) || 0;
+const supplyDisruption = parseFloat(document.getElementById('sim-supply-disruption')?.value) || 0;
+const duration = parseInt(document.getElementById('sim-duration')?.value) || 30;
+const scenario = {};
+if (materialPrice !== 0) scenario.raw_material_price_increase = materialPrice;
+if (demandSurge !== 0) scenario.demand_surge = demandSurge;
+if (supplyDisruption !== 0) scenario.supply_chain_disruption = supplyDisruption;
+if (Object.keys(scenario).length === 0) { alert('Please set at least one scenario parameter'); return; }
+const resultsDiv = document.getElementById('simulation-results');
+if (resultsDiv) resultsDiv.style.display = 'block';
+try {
+const response = await fetch('/api/advanced/simulation/run/', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ scenario, duration_days: duration })
+});
+const result = await response.json();
+const impactEl = document.getElementById('impact-analysis');
+if (impactEl && result.impact_analysis) {
+let html = '<div style="display: grid; gap: 1rem;">';
+    for (const [key, imp] of Object.entries(result.impact_analysis)) {
+    const color = imp.change >= 0 ? '#10b981' : '#ef4444';
+    const arrow = imp.change >= 0 ? '↑' : '↓';
+    html += '<div style="padding: 1rem; background: rgba(255,255,255,0.02); border-radius: 8px;">' +
+        '<div style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase;">' +
+            key.replace(/_/g, ' ') + '</div>
+        <div style="display: flex; justify-content: space-between;">' +
+            '<span style="font-size: 1.2rem; font-weight: 700;">' + imp.predicted.toFixed(2) + '</span>' +
+            '<span style="color: ' + color + '; font-weight: 700;">' + arrow + ' ' +
+                Math.abs(imp.change_percent).toFixed(1) + '%</span></div>
+    </div>';
+    }
+    impactEl.innerHTML = html + '</div>';
+}
+const riskEl = document.getElementById('risk-assessment');
+if (riskEl) riskEl.innerHTML = '<div style="text-align: center; padding: 2rem;">
+    <div style="font-size: 3rem; ' + 
+            'font-weight: 900;">' + result.risk_level + '</div>
+    <p style="color: var(--text-dim);">Risk Level</p>
+</div>';
+const recEl = document.getElementById('simulation-recommendations');
+if (recEl && result.recommendations) {
+recEl.innerHTML = '<ul style="list-style: none; padding: 0;">' + result.recommendations.map(r =>
+    '<li style="padding: 1rem; background: rgba(255,255,255,0.02); border-radius: 8px; ' + 
+                'margin-bottom: 0.75rem; border-left: 3px solid var(--accent);">' + r + '</li>').join('') + '</ul>';
+}
+if (typeof addInsightLog === 'function') addInsightLog('🔮 DIGITAL TWIN: Simulation ' +
+result.simulation_id + ' - Risk: ' + result.risk_level);
+} catch (error) { alert('Error running simulation: ' + error.message); }
+if (window.lucide) lucide.createIcons();
+}
+
+// 4. IMMUTABLE AUDIT TRAIL
+async function verifyAuditIntegrity() {
+try {
+const response = await fetch('/api/advanced/audit/verify/');
+const integrity = await response.json();
+const statusDiv = document.getElementById('audit-integrity');
+const lastVerifiedDiv = document.getElementById('audit-last-verified');
+if (statusDiv) {
+statusDiv.textContent = integrity.valid ? '✓ VALID' : '✗ COMPROMISED'; statusDiv.style.color =
+integrity.valid ? '#10b981' : '#ef4444';
+}
+if (lastVerifiedDiv) lastVerifiedDiv.textContent = new Date().toLocaleTimeString();
+if (typeof addInsightLog === 'function') addInsightLog('🛡️ AUDIT: Integrity ' +
+(integrity.valid ? 'VERIFIED' : 'COMPROMISED') + ' - ' + integrity.total_blocks + ' blocks');
+if (!integrity.valid) alert('Audit trail integrity compromised! corrupted blocks: ' +
+integrity.corrupted_blocks.length);
+} catch (error) { console.error('Audit Verification Error:', error); }
+}
+
+async function loadAuditCycles() {
+try {
+const response = await fetch('/api/advanced/audit/cycles/?limit=20');
+const data = await response.json();
+const totalEl = document.getElementById('audit-total-cycles');
+if (totalEl) totalEl.textContent = data.total;
+const listDiv = document.getElementById('audit-cycles-list');
+if (listDiv && data.cycles && data.cycles.length > 0) {
+listDiv.innerHTML = data.cycles.map(c => '<div class="activity-item" style="margin-bottom: 1rem;">' +
+    '<div class="activity-time">' + new Date(c.timestamp).toLocaleString() + '</div>' +
+    '<div class="activity-content">
+        <div class="activity-title">Cycle: ' + c.cycle_id +
+            '</div>
+        <div style="font-size: 0.75rem; color: #10b981;">Hash: ' + c.hash.substring(0, 16) +
+            '...</div>
+    </div>
+</div>').join('');
+} else if (listDiv) {
+listDiv.innerHTML = '<p style="color: var(--text-dim);">No audit cycles yet</p>';
+}
+} catch (error) { console.error('Error loading audit cycles:', error); }
+}
+
+async function generateAuditReport() {
+try {
+const response = await fetch('/api/advanced/audit/report/');
+const report = await response.json();
+const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a'); a.href = url; a.download = 'audit_report_' +
+new Date().toISOString() + '.json'; a.click();
+if (typeof addInsightLog === 'function') addInsightLog('📄 AUDIT: Report generated - ' +
+report.summary.total_cycles + ' cycles');
+} catch (error) { console.error('Error generating audit report:', error); }
+}
+
+if (typeof initAdvancedFeatures === 'undefined') {
+function initAdvancedFeatures() {
+loadBoardroomHistory(); loadAuditCycles(); verifyAuditIntegrity();
+}
+}

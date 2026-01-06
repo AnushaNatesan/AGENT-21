@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent-21 | Sovereign Intelligence Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg: #050505;
+            --glass: rgba(20, 20, 20, 0.7);
+            --accent: #00ffcc;
+            --accent-glow: rgba(0, 255, 204, 0.3);
+            --danger: #ff4d4d;
+            --text: #ffffff;
+            --text-dim: #b0b0b0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 20% 20%, #1a1a2e 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, #0d1b1e 0%, transparent 40%);
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .status-badge {
+            background: var(--accent-glow);
+            color: var(--accent);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid var(--accent);
+        }
+
+        main {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-dim);
+        }
+
+        /* Anomaly Feed */
+        .anomaly-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .anomaly-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--danger);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .anomaly-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .anomaly-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Right Sidebar: Agent Brain */
+        .brain-logs {
+            height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            color: #00ff00;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+            padding-bottom: 4px;
+        }
+
+        .log-time {
+            color: #888;
+            font-size: 0.7rem;
+        }
+
+        /* SQL Sandbox */
+        .sql-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            color: var(--accent);
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: monospace;
+            resize: none;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        /* RCA Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: #111;
+            width: 90%;
+            max-width: 700px;
+            border-radius: 24px;
+            padding: 2rem;
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        .rca-header {
+            margin-bottom: 2rem;
+        }
+
+        .rca-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .rca-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 12px;
+        }
+
+        .rca-box h3 {
+            font-size: 0.9rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .loader {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .pulse {
+            animation: pulse-animation 2s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% {
+                box-shadow: 0 0 0 0px var(--accent-glow);
+            }
+
+            100% {
+                box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">
+            <i data-lucide="cpu"></i>
+            AGENT-<span>21</span>
+        </div>
+        <div style="display: flex; gap: 1.5rem; align-items: center;">
+            <a href="/business/insights/" class="btn btn-outline" style="text-decoration: none; padding: 0.5rem 1rem;">
+                <i data-lucide="bar-chart-3"></i> Market Insights
+            </a>
+            <div class="status-badge pulse">
+                <i data-lucide="zap" size="14"></i>
+                SOVEREIGN ACTIVE
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="content">
+            <!-- SQL Intelligence Section -->
+            <section class="card" style="margin-bottom: 2rem;">
+                <h2><i data-lucide="terminal"></i> SENSING LAYER: Autonomous SQL Generation</h2>
+                <textarea id="sqlQuery" class="sql-input"
+                    rows="3">SELECT * FROM revenue_stats ORDER BY created_at DESC LIMIT 5;</textarea>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn" onclick="runAgentCycle()">
+                        <i data-lucide="play"></i> Run Agent Cycle
+                        <div id="cycleLoader" class="loader"></div>
+                    </button>
+                    <button class="btn btn-outline" onclick="resetEnv()">
+                        <i data-lucide="refresh-cw"></i> Reset Environment
+                    </button>
+                </div>
+            </section>
+
+            <!-- Anomalies Section -->
+            <section class="card">
+                <h2><i data-lucide="alert-triangle"></i> ANOMALY FEED (Active Detections)</h2>
+                <div id="anomalyList" class="anomaly-list">
+                    <p style="color: var(--text-dim);">No anomalies detected yet. Run a cycle to sense the environment.
+                    </p>
+                </div>
+            </section>
+        </div>
+
+        <aside>
+            <!-- Agent Reasoning -->
+            <section class="card" style="height: 100%;">
+                <h2><i data-lucide="brain"></i> AGENT BRAIN</h2>
+                <div id="brainLogs" class="brain-logs">
+                    <div class="log-entry">
+                        <span class="log-time">[00:00:00]</span> Initializing reasoning engine...
+                    </div>
+                </div>
+            </section>
+        </aside>
+    </main>
+
+    <!-- RCA Modal -->
+    <div id="rcaModal" class="modal-overlay">
+        <div class="modal">
+            <div class="rca-header">
+                <h2 style="color: var(--accent);"><i data-lucide="microscope"></i> Root Cause Analysis Report</h2>
+                <p id="rcaAnomalyMsg" style="margin-top: 0.5rem;"></p>
+            </div>
+            <div class="rca-grid">
+                <div class="rca-box">
+                    <h3><i data-lucide="search"></i> Likely Root Cause</h3>
+                    <p id="rcaCause">Analyzing...</p>
+                </div>
+                <div class="rca-box">
+                    <h3><i data-lucide="shield-check"></i> Proactive Fix</h3>
+                    <p id="rcaFix">Generating recommendation...</p>
+                </div>
+                <div class="rca-box" style="grid-column: span 2;">
+                    <h3><i data-lucide="bar-chart"></i> Confidence Level</h3>
+                    <div style="height: 8px; background: #333; border-radius: 4px; margin-top: 8px;">
+                        <div id="rcaConfidenceBar"
+                            style="height: 100%; background: var(--accent); border-radius: 4px; width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem;">
+                <button class="btn" onclick="executeMitigation()">Trigger Mitigation</button>
+                <button class="btn btn-outline" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function addLog(msg) {
+            const logs = document.getElementById('brainLogs');
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="log-time">[${time}]</span> ${msg}`;
+            logs.prepend(entry);
+        }
+
+        async function runAgentCycle() {
+            const query = document.getElementById('sqlQuery').value;
+            const loader = document.getElementById('cycleLoader');
+            loader.style.display = 'block';
+
+            addLog("SENSING: Injecting simulation data...");
+
+            try {
+                const response = await fetch('/execute-sql/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+                const data = await response.json();
+
+                addLog("THINKING: Processing ML Anomaly detection...");
+                renderAnomalies(data.active_anomalies);
+
+                if (data.agent_reasoning) {
+                    addLog(`REASONING: ${JSON.stringify(data.agent_reasoning.root_cause || data.agent_reasoning)}`);
+                }
+
+                addLog("ACTION: Auto-cleanup complete.");
+            } catch (err) {
+                addLog("ERROR: Cycle failed - " + err.message);
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        function renderAnomalies(anomalies) {
+            const list = document.getElementById('anomalyList');
+            list.innerHTML = '';
+
+            if (!anomalies || anomalies.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-dim);">Environment healthy. No anomalies detected.</p>';
+                return;
+            }
+
+            anomalies.forEach(a => {
+                const item = document.createElement('div');
+                item.className = 'anomaly-item';
+                item.onclick = () => showRCA(a);
+                item.innerHTML = `
+                    <div class="anomaly-meta">
+                        <span>${a.type.toUpperCase()}</span>
+                        <span>VALUE: ${a.value || a.stock || 'N/A'}</span>
+                    </div>
+                    <div>${a.message}</div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        async function showRCA(anomaly) {
+            document.getElementById('rcaModal').style.display = 'flex';
+            document.getElementById('rcaAnomalyMsg').innerText = anomaly.message;
+            document.getElementById('rcaCause').innerText = "Running LLM Reasoning Multi-Tool Step...";
+
+            try {
+                const response = await fetch('/agent-rca/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ anomaly: anomaly })
+                });
+                const data = await response.json();
+
+                const analysis = data.analysis;
+                if (typeof analysis === 'string') {
+                    document.getElementById('rcaCause').innerText = analysis;
+                } else {
+                    document.getElementById('rcaCause').innerText = analysis.root_cause || "Undefined";
+                    document.getElementById('rcaFix').innerText = analysis.recommendations || "No action required.";
+                    document.getElementById('rcaConfidenceBar').style.width = (analysis.confidence_score || 0) + '%';
+                }
+
+                addLog(`RCA: Completed analysis for ${anomaly.type}`);
+            } catch (err) {
+                document.getElementById('rcaCause').innerText = "Analysis failed: " + err.message;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('rcaModal').style.display = 'none';
+        }
+
+        async function resetEnv() {
+            addLog("ACTION: Reseting environment to baseline...");
+            await fetch('/reset-env/', { method: 'POST' });
+            addLog("SUCCESS: Environment reset.");
+            document.getElementById('anomalyList').innerHTML = '<p style="color: var(--text-dim);">Environment reset. Ready.</p>';
+        }
+
+        function executeMitigation() {
+            alert("Sovereign Action Triggered: Mitigating issue via autonomous tools.");
+            addLog("ACTION: Triggered SendEmail and UpdateInventory tools.");
+            closeModal();
+        }
+    </script>
+</body>
+
+</html>

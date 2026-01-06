@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Intelligence Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000a35 0%, #91a1fa 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .input-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        .input-section h2 {
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .form-group input {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .results-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .overview-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            color: #666;
+            font-size: 0.9em;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .card-subtitle {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(#667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: white;
+            position: absolute;
+        }
+
+        .score-text {
+            position: relative;
+            z-index: 1;
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .competitor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .competitor-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .competitor-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .competitor-name {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .price-tag {
+            background: linear-gradient(135deg, #87befd 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .strengths-weaknesses {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .strength-item, .weakness-item {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+
+        .strength-item {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 3px solid #4caf50;
+        }
+
+        .weakness-item {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 3px solid #f44336;
+        }
+
+        .list-header {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .recommendation-item, .risk-item {
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            border-left: 4px solid;
+            background: #f5f5f5;
+        }
+
+        .recommendation-item {
+            border-left-color: #4caf50;
+        }
+
+        .risk-item {
+            border-left-color: #ff9800;
+        }
+
+        .pricing-box {
+            background: linear-gradient(135deg, #173ff1 0%, #5378f3 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .price-range {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 4px solid #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Market Intelligence Platform</h1>
+            <p>AI-Powered Market Analysis & Competitive Intelligence</p>
+        </div>
+
+        <div class="input-section">
+            <h2>📊 Product Analysis Request</h2>
+            <form id="surveyForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="productName">Product Name</label>
+                        <input type="text" id="productName" placeholder="e.g., Smart Watch" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <input type="text" id="category" placeholder="e.g., Wearable Technology" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="targetMarket">Target Market</label>
+                        <input type="text" id="targetMarket" placeholder="e.g., Young professionals" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="launchRegion">Launch Region</label>
+                        <input type="text" id="launchRegion" placeholder="e.g., India" required>
+                    </div>
+                </div>
+                <button type="submit" class="analyze-btn" id="analyzeBtn">
+                    🚀 Analyze Market
+                </button>
+            </form>
+        </div>
+
+        <div id="loadingSection" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Analyzing market data and competitive landscape...</p>
+        </div>
+
+        <div id="resultsSection" class="results-section">
+            <!-- Results will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://172.16.6.83:8000/api/market/survey/';
+
+        document.getElementById('surveyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                product_name: document.getElementById('productName').value,
+                category: document.getElementById('category').value,
+                target_market: document.getElementById('targetMarket').value,
+                launch_region: document.getElementById('launchRegion').value
+            };
+
+            document.getElementById('analyzeBtn').disabled = true;
+            document.getElementById('loadingSection').style.display = 'block';
+            document.getElementById('resultsSection').style.display = 'none';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+
+                const data = await response.json();
+                displayResults(data.research);
+            } catch (error) {
+                document.getElementById('resultsSection').innerHTML = `
+                    <div class="error-message">
+                        <strong>Error:</strong> Unable to fetch market analysis. Please check your API connection and try again.
+                    </div>
+                `;
+                document.getElementById('resultsSection').style.display = 'block';
+            } finally {
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('analyzeBtn').disabled = false;
+            }
+        });
+
+        function displayResults(research) {
+            const successRate = Math.round(research.success_probability.estimated_success_rate * 100);
+            const interestScore = Math.round(research.market_overview.customer_interest_score * 100);
+
+            const resultsHTML = `
+                <div class="overview-cards">
+                    <div class="card">
+                        <div class="card-title">Demand Level</div>
+                        <div class="card-value">${research.market_overview.demand_level}</div>
+                        <div class="card-subtitle">Market Demand</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Growth Trend</div>
+                        <div class="card-value">${research.market_overview.growth_trend}</div>
+                        <div class="card-subtitle">Market Trajectory</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Interest Score</div>
+                        <div class="score-circle">
+                            <div class="score-text">${interestScore}%</div>
+                        </div>
+                        <div class="card-subtitle">Customer Interest</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Success Probability</div>
+                        <div class="score-circle">
+                            <div class="score-text">${successRate}%</div>
+                        </div>
+                        <div class="card-subtitle">${research.success_probability.confidence_level}</div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3 class="section-title">💰 Pricing Strategy</h3>
+                    <div class="pricing-box">
+                        <div style="font-size: 1.2em; opacity: 0.9;">Recommended Price Range</div>
+                        <div class="price-range">${research.pricing_insights.recommended_price}</div>
+                        <p style="margin-top: 15px; opacity: 0.9;">${research.pricing_insights.competitive_positioning}</p>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3 class="section-title">🏢 Competitive Landscape</h3>
+                    <div class="competitor-grid">
+                        ${research.competitor_analysis.map(comp => `
+                            <div class="competitor-card">
+                                <div class="competitor-name">${comp.brand}</div>
+                                <div class="price-tag">${comp.price_range}</div>
+                                <div class="strengths-weaknesses">
+                                    <div>
+                                        <div class="list-header">✅ Strengths</div>
+                                        ${comp.strengths.map(s => `<div class="strength-item">${s}</div>`).join('')}
+                                    </div>
+                                    <div>
+                                        <div class="list-header">⚠️ Weaknesses</div>
+                                        ${comp.weaknesses.map(w => `<div class="weakness-item">${w}</div>`).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3 class="section-title">🎯 Strategic Recommendations</h3>
+                    ${research.recommendations.map((rec, i) => `
+                        <div class="recommendation-item">
+                            <strong>${i + 1}.</strong> ${rec}
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="section-card">
+                    <h3 class="section-title">⚠️ Risk Assessment</h3>
+                    ${research.risks.map((risk, i) => `
+                        <div class="risk-item">
+                            <strong>Risk ${i + 1}:</strong> ${risk}
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="section-card">
+                    <h3 class="section-title">💡 Success Analysis</h3>
+                    <p style="font-size: 1.1em; line-height: 1.6; color: #333;">
+                        ${research.success_probability.reasoning}
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="successChart"></canvas>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('resultsSection').innerHTML = resultsHTML;
+            document.getElementById('resultsSection').style.display = 'block';
+
+            createSuccessChart(successRate);
+        }
+
+        function createSuccessChart(successRate) {
+            const ctx = document.getElementById('successChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Success Probability', 'Risk Factor'],
+                    datasets: [{
+                        data: [successRate, 100 - successRate],
+                        backgroundColor: [
+                            'rgba(102, 126, 234, 0.8)',
+                            'rgba(255, 152, 0, 0.8)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

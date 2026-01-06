@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Executive War Room – Scenario Simulator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      font-weight: 700;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      color: #94a3b8;
+      font-size: 1.1em;
+      font-weight: 300;
+    }
+
+    .card {
+      background: rgba(2, 6, 23, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(51, 65, 85, 0.5);
+      padding: 30px;
+      border-radius: 16px;
+      margin-top: 25px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .input-group {
+      position: relative;
+    }
+
+    textarea {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.8);
+      color: #e2e8f0;
+      border: 2px solid #334155;
+      padding: 16px;
+      border-radius: 12px;
+      resize: vertical;
+      font-size: 1em;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    button {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      border: none;
+      padding: 14px 32px;
+      border-radius: 10px;
+      color: white;
+      margin-top: 16px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Conference Table */
+    .conference-table {
+      position: relative;
+      width: 100%;
+      min-height: 600px;
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 20px;
+      padding: 40px;
+      margin-top: 30px;
+    }
+
+    .table-surface {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60%;
+      height: 40%;
+      background: linear-gradient(135deg, rgba(51, 65, 85, 0.3) 0%, rgba(30, 41, 59, 0.3) 100%);
+      border-radius: 50%;
+      border: 3px solid rgba(59, 130, 246, 0.2);
+      box-shadow: 0 0 60px rgba(59, 130, 246, 0.1);
+    }
+
+    .participant {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      animation: participantEntry 0.8s ease-out forwards;
+      opacity: 0;
+    }
+
+    .participant-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3em;
+      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      user-select: none;
+    }
+
+    .participant-avatar:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 40px rgba(59, 130, 246, 0.5);
+    }
+
+    .participant-avatar::after {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      border-radius: 50%;
+      border: 2px solid rgba(59, 130, 246, 0.5);
+      animation: pulse-ring 2s infinite;
+    }
+
+    .participant-avatar.speaking {
+      transform: scale(1.1);
+      box-shadow: 0 12px 48px rgba(59, 130, 246, 0.6);
+    }
+
+    .participant-avatar.speaking::after {
+      animation: pulse-ring 0.8s infinite;
+    }
+
+    .participant-name {
+      font-weight: 700;
+      font-size: 0.9em;
+      color: #60a5fa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    /* Word Cloud Bubble */
+    .word-cloud {
+      position: absolute;
+      max-width: 350px;
+      min-width: 250px;
+      padding: 20px;
+      background: rgba(2, 6, 23, 0.95);
+      border: 2px solid rgba(59, 130, 246, 0.5);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      animation: bubbleIn 0.5s ease-out;
+      z-index: 10;
+      opacity: 0;
+    }
+
+    .word-cloud.active {
+      opacity: 1;
+    }
+
+    .word-cloud.persistent {
+      opacity: 1;
+      border-color: rgba(34, 197, 94, 0.6);
+      box-shadow: 0 8px 32px rgba(34, 197, 94, 0.3);
+    }
+
+    .word-cloud.persistent::before {
+      border-color: rgba(34, 197, 94, 0.6);
+    }
+
+    .word-cloud::before {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: rgba(2, 6, 23, 0.95);
+      border-right: 2px solid rgba(59, 130, 246, 0.5);
+      border-bottom: 2px solid rgba(59, 130, 246, 0.5);
+      transform: rotate(-45deg);
+    }
+
+    .word-cloud.top::before {
+      bottom: -11px;
+      left: 50%;
+      margin-left: -10px;
+    }
+
+    .word-cloud.bottom::before {
+      top: -11px;
+      left: 50%;
+      margin-left: -10px;
+      transform: rotate(135deg);
+    }
+
+    .word-cloud.left::before {
+      right: -11px;
+      top: 50%;
+      margin-top: -10px;
+      transform: rotate(-135deg);
+    }
+
+    .word-cloud.right::before {
+      left: -11px;
+      top: 50%;
+      margin-top: -10px;
+      transform: rotate(45deg);
+    }
+
+    .cloud-text {
+      color: #cbd5e1;
+      line-height: 1.6;
+      font-size: 0.95em;
+    }
+
+    /* Participant Positions (around the table) */
+    .pos-0 {
+      top: 5%;
+      left: 30%;
+      transform: translateX(-50%);
+    }
+
+    .pos-1 {
+      top: 50%;
+      right: 5%;
+      transform: translateY(-50%);
+    }
+
+    .pos-2 {
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .pos-3 {
+      top: 50%;
+      left: 5%;
+      transform: translateY(-50%);
+    }
+
+    .pos-4 {
+      top: 20%;
+      right: 15%;
+    }
+
+    .pos-5 {
+      top: 20%;
+      left: 15%;
+    }
+
+    .pos-6 {
+      bottom: 20%;
+      right: 15%;
+    }
+
+    .pos-7 {
+      bottom: 20%;
+      left: 15%;
+    }
+
+    .pos-8 {
+      top: 35%;
+      right: 8%;
+    }
+
+    .pos-9 {
+      bottom: 35%;
+      right: 8%;
+    }
+
+    .pos-10 {
+      top: 35%;
+      left: 8%;
+    }
+
+    .pos-11 {
+      bottom: 35%;
+      left: 8%;
+    }
+
+    /* Report Card Styles */
+    .report-section {
+      margin-top: 25px;
+      padding: 20px;
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 12px;
+      border: 1px solid rgba(51, 65, 85, 0.3);
+    }
+
+    .report-section h4 {
+      color: #3b82f6;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .summary-box {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      line-height: 1.8;
+      color: #e2e8f0;
+      margin-bottom: 20px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul li {
+      padding: 12px 16px;
+      margin: 8px 0;
+      background: rgba(59, 130, 246, 0.05);
+      border-left: 3px solid #3b82f6;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    ul li:hover {
+      background: rgba(59, 130, 246, 0.1);
+      transform: translateX(5px);
+    }
+
+    ul li::before {
+      content: '▸';
+      color: #3b82f6;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .loader {
+      border: 4px solid rgba(30, 41, 59, 0.3);
+      border-top: 4px solid #3b82f6;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-right: 15px;
+      vertical-align: middle;
+    }
+
+    .loading-text {
+      font-size: 1.1em;
+      color: #94a3b8;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes participantEntry {
+      from {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1.3);
+        opacity: 0;
+      }
+    }
+
+    @keyframes bubbleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .icon-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: rgba(59, 130, 246, 0.2);
+      border-radius: 8px;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="header">
+      <h1>⚡ Executive War Room</h1>
+      <p class="subtitle">Animated Board Discussion Simulator</p>
+    </div>
+
+    <!-- Input card -->
+    <div class="card">
+      <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+        <span class="icon-badge">🎯</span>
+        Enter Scenario Question
+      </h3>
+      <div class="input-group">
+        <textarea id="question" rows="4"
+          placeholder="Example: What if a storm hits our primary zone tomorrow? How should we respond?"></textarea>
+      </div>
+      <button onclick="runScenario()">
+        <span style="position: relative; z-index: 1;">▶ Run Simulation</span>
+      </button>
+    </div>
+
+    <!-- Loading card -->
+    <div id="loading_card" class="card" style="display:none;">
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <span class="loader"></span>
+        <span class="loading-text">Assembling the board… discussion starting</span>
+      </div>
+    </div>
+
+    <!-- Conference Table Discussion -->
+    <div id="discussion_card" class="card" style="display:none;">
+      <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
+        <span class="icon-badge">💬</span>
+        Board Room Discussion
+      </h3>
+      <div class="conference-table" id="conference_table">
+        <div class="table-surface"></div>
+      </div>
+    </div>
+
+    <!-- Final report -->
+    <div id="report_card" class="card" style="display:none;">
+      <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+        <span class="icon-badge">📊</span>
+        Final Executive Report
+      </h3>
+
+      <div class="summary-box">
+        <strong style="color: #60a5fa; display: block; margin-bottom: 10px;">Executive Summary</strong>
+        <p id="summary"></p>
+      </div>
+
+      <div class="report-section">
+        <h4>
+          <span style="font-size: 1.3em;">🛡️</span>
+          Mitigation Plan
+        </h4>
+        <ul id="mitigation"></ul>
+      </div>
+
+      <div class="report-section">
+        <h4>
+          <span style="font-size: 1.3em;">⚙️</span>
+          Recommended Automations
+        </h4>
+        <ul id="automations"></ul>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const personaConfig = {
+      'CTO': { icon: '👨‍💻', color: '#3b82f6', gradient: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' },
+      'CEO': { icon: '🤵', color: '#8b5cf6', gradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)' },
+      'COO': { icon: '👩‍💼', color: '#10b981', gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' },
+      'CFO': { icon: '💰', color: '#f59e0b', gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' },
+      'CMO': { icon: '📢', color: '#ec4899', gradient: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)' },
+      'RISK': { icon: '⚠️', color: '#ef4444', gradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' },
+      'REVENUE': { icon: '📈', color: '#a855f7', gradient: 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)' },
+      'CUSTOMER': { icon: '👥', color: '#06b6d4', gradient: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)' },
+      'EXPERIENCE': { icon: '⭐', color: '#f97316', gradient: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' },
+      'OPERATIONS': { icon: '👷', color: '#3b82f6', gradient: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' },
+      'FACTORY': { icon: '🏭', color: '#84cc16', gradient: 'linear-gradient(135deg, #84cc16 0%, #65a30d 100%)' },
+      'LOGISTICS': { icon: '🚚', color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' },
+      'VP': { icon: '🎯', color: '#06b6d4', gradient: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)' },
+      'Director': { icon: '📊', color: '#8b5cf6', gradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)' },
+      'Manager': { icon: '👔', color: '#14b8a6', gradient: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)' },
+      'HEAD': { icon: '👨‍💼', color: '#8b5cf6', gradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)' },
+      'CHIEF': { icon: '👔', color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' },
+      'default': { icon: '👤', color: '#64748b', gradient: 'linear-gradient(135deg, #64748b 0%, #475569 100%)' }
+    };
+
+    const positions = [
+      'pos-0',   // 12 o'clock
+      'pos-1',   // 1 o'clock
+      'pos-2',   // 2 o'clock
+      'pos-3',   // 3 o'clock
+      'pos-4',   // 4 o'clock
+      'pos-5',   // 5 o'clock
+      'pos-6',   // 6 o'clock
+      'pos-7',   // 7 o'clock
+      'pos-8',   // 8 o'clock
+      'pos-9',   // 9 o'clock
+      'pos-10',  // 10 o'clock
+      'pos-11'   // 11 o'clock
+    ];
+
+    const cloudPositions = [
+      { class: 'bottom', style: 'top: 130px; left: 50%; transform: translateX(-50%);' },          // top
+      { class: 'left', style: 'top: 50%; left: 130px; transform: translateY(-50%);' },            // right
+      { class: 'top', style: 'bottom: 130px; left: 50%; transform: translateX(-50%);' },          // bottom
+      { class: 'right', style: 'top: 50%; right: 130px; transform: translateY(-50%);' },          // left
+      { class: 'bottom', style: 'top: 140px; right: 20%; transform: translateX(20%);' },          // top-right
+      { class: 'bottom', style: 'top: 140px; left: 20%; transform: translateX(-20%);' },          // top-left
+      { class: 'top', style: 'bottom: 140px; right: 20%; transform: translateX(20%);' },          // bottom-right
+      { class: 'top', style: 'bottom: 140px; left: 20%; transform: translateX(-20%);' },          // bottom-left
+      { class: 'left', style: 'top: 38%; left: 125px;' },                                          // mid-right-top
+      { class: 'left', style: 'bottom: 38%; left: 125px;' },                                       // mid-right-bottom
+      { class: 'right', style: 'top: 38%; right: 125px;' },                                        // mid-left-top
+      { class: 'right', style: 'bottom: 38%; right: 125px;' }                                      // mid-left-bottom
+    ];
+
+    function getPersonaConfig(role) {
+      for (let key in personaConfig) {
+        if (role.toUpperCase().includes(key.toUpperCase())) {
+          return personaConfig[key];
+        }
+      }
+      return personaConfig['default'];
+    }
+
+    async function runScenario() {
+      const q = document.getElementById("question").value;
+
+      if (!q.trim()) {
+        alert("Please enter a scenario question first.");
+        return;
+      }
+
+      // Hide old results
+      document.getElementById("discussion_card").style.display = "none";
+      document.getElementById("report_card").style.display = "none";
+      document.getElementById("conference_table").innerHTML = '<div class="table-surface"></div>';
+
+      // Show loading
+      document.getElementById("loading_card").style.display = "block";
+
+      try {
+        const res = await fetch("/api/boardroom/simulate/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: q })
+        });
+
+        const data = await res.json();
+        document.getElementById("loading_card").style.display = "none";
+
+        if (!res.ok) {
+          alert("Simulation Error: " + (data.error || "Unknown error"));
+          return;
+        }
+
+        const text = data.war_room_report || data.simulation || data.result || "";
+
+        if (!text) {
+          alert("No simulation text returned from backend.");
+          return;
+        }
+
+        // Extract discussion
+        let discussionBlock = "";
+        if (text.includes("<discussion>")) {
+          discussionBlock = text.split("<discussion>")[1].split("</discussion>")[0];
+        }
+
+        // Extract final report JSON
+        let reportJSON = null;
+        if (text.includes("<final_report_json>")) {
+          const reportBlock = text.split("<final_report_json>")[1].split("</final_report_json>")[0];
+          try {
+            reportJSON = JSON.parse(reportBlock);
+          } catch (e) {
+            console.error("JSON parse failed:", e);
+          }
+        }
+
+        // Render discussion as animated table
+        if (discussionBlock) {
+          document.getElementById("discussion_card").style.display = "block";
+
+          const lines = discussionBlock.trim().split("\n").filter(l => l.includes("]:"));
+          const participants = new Map();
+
+          // Create participants
+          lines.forEach((l, idx) => {
+            const parts = l.split("]:");
+            const role = parts[0].replace('[', '').trim();
+
+            if (!participants.has(role)) {
+              const config = getPersonaConfig(role);
+              const position = positions[participants.size % positions.length];
+
+              const participantDiv = document.createElement('div');
+              participantDiv.className = `participant ${position}`;
+              participantDiv.style.animationDelay = `${participants.size * 0.15}s`;
+              participantDiv.innerHTML = `
+            <div class="participant-avatar" style="background: ${config.gradient};" data-role="${role}" onclick="togglePersonaSuggestion('${role}')">
+              ${config.icon}
+            </div>
+            <div class="participant-name">${role}</div>
+          `;
+
+              document.getElementById("conference_table").appendChild(participantDiv);
+              participants.set(role, { element: participantDiv, messages: [], allMessages: [] });
+            }
+
+            const message = parts.slice(1).join("]:").trim();
+            participants.get(role).messages.push(message);
+            participants.get(role).allMessages.push(message);
+          });
+
+          // Animate discussion
+          setTimeout(() => animateDiscussion(participants, 0), 1000);
+
+          // Store participants globally for click handling
+          window.boardParticipants = participants;
+        }
+
+        // Render final report immediately
+        if (reportJSON) {
+          document.getElementById("summary").innerText = reportJSON.executive_summary || "No summary generated.";
+          document.getElementById("mitigation").innerHTML = (reportJSON.mitigation_plan || []).map((m, idx) => `<li style="animation-delay: ${idx * 0.1}s;">${m}</li>`).join("");
+          document.getElementById("automations").innerHTML = (reportJSON.automations_to_trigger || []).map((a, idx) => `<li style="animation-delay: ${idx * 0.1}s;">${a}</li>`).join("");
+          document.getElementById("report_card").style.display = "block";
+        }
+
+      } catch (err) {
+        document.getElementById("loading_card").style.display = "none";
+        alert("Error calling API. Check console.");
+        console.error(err);
+      }
+    }
+
+    function animateDiscussion(participants, messageIndex) {
+      let currentParticipantIndex = 0;
+      const participantArray = Array.from(participants.entries());
+
+      const showNextMessage = () => {
+        // Remove all existing word clouds and speaking states
+        document.querySelectorAll('.word-cloud').forEach(el => el.remove());
+        document.querySelectorAll('.participant-avatar').forEach(el => el.classList.remove('speaking'));
+
+        if (currentParticipantIndex >= participantArray.length) {
+          return; // Discussion complete
+        }
+
+        const [role, data] = participantArray[currentParticipantIndex];
+
+        if (messageIndex >= data.messages.length) {
+          currentParticipantIndex++;
+          if (currentParticipantIndex < participantArray.length) {
+            setTimeout(() => showNextMessage(), 500);
+          }
+          return;
+        }
+
+        const message = data.messages[messageIndex];
+        const avatar = data.element.querySelector('.participant-avatar');
+        avatar.classList.add('speaking');
+
+        // Create word cloud
+        const cloud = document.createElement('div');
+        const posIndex = Array.from(participants.keys()).indexOf(role) % cloudPositions.length;
+        const cloudPos = cloudPositions[posIndex];
+
+        cloud.className = `word-cloud ${cloudPos.class} active`;
+        cloud.style.cssText = cloudPos.style;
+        cloud.innerHTML = `<div class="cloud-text">${message}</div>`;
+
+        data.element.appendChild(cloud);
+
+        // Next message
+        setTimeout(() => {
+          currentParticipantIndex++;
+          showNextMessage();
+        }, 2500);
+      };
+
+      showNextMessage();
+    }
+
+    function togglePersonaSuggestion(role) {
+      if (!window.boardParticipants || !window.boardParticipants.has(role)) {
+        return;
+      }
+
+      const data = window.boardParticipants.get(role);
+      const avatar = data.element.querySelector('.participant-avatar');
+
+      // Check if already showing
+      const existingCloud = data.element.querySelector('.word-cloud.persistent');
+
+      if (existingCloud) {
+        // Remove it
+        existingCloud.remove();
+        avatar.classList.remove('speaking');
+        return;
+      }
+
+      // Remove any other persistent clouds
+      document.querySelectorAll('.word-cloud.persistent').forEach(el => el.remove());
+      document.querySelectorAll('.participant-avatar.speaking').forEach(el => el.classList.remove('speaking'));
+
+      // Create persistent word cloud with all messages
+      avatar.classList.add('speaking');
+      const cloud = document.createElement('div');
+      const posIndex = Array.from(window.boardParticipants.keys()).indexOf(role) % cloudPositions.length;
+      const cloudPos = cloudPositions[posIndex];
+
+      cloud.className = `word-cloud ${cloudPos.class} active persistent`;
+      cloud.style.cssText = cloudPos.style;
+
+      const allSuggestions = data.allMessages.join('<br><br>');
+      cloud.innerHTML = `<div class="cloud-text"><strong style="color: #60a5fa; display: block; margin-bottom: 8px;">Complete Suggestions:</strong>${allSuggestions}</div>`;
+
+      data.element.appendChild(cloud);
+    }
+
+
+
+  </script>
+
+</body>
+
+</html>

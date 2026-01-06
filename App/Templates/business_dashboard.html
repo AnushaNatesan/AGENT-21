@@ -1,0 +1,1710 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent-21 | Business Intelligence & Market Dynamics</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Orbitron:wght@400;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg: #030712;
+            --glass: rgba(17, 24, 39, 0.7);
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --gold: #fbbf24;
+            --emerald: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        aside {
+            background: rgba(17, 24, 39, 0.95);
+            border-right: 1px solid var(--border);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: var(--accent);
+            text-shadow: 0 0 20px var(--accent-glow);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item {
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            color: var(--text-dim);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: var(--accent-glow);
+            color: var(--text);
+        }
+
+        main {
+            padding: 3rem;
+            overflow-y: auto;
+        }
+
+        .header-section {
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .title-group h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .title-group p {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        /* Professional Stats Cards */
+        .viz-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .viz-card h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .viz-card h2 i {
+            color: var(--accent);
+        }
+
+        /* Revenue Pillars Visualization */
+        .revenue-pillars-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            gap: 2rem;
+            padding: 4rem 2rem 2rem 2rem;
+            min-height: 450px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 24px;
+            overflow-x: auto;
+        }
+
+        .pillar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            min-width: 140px;
+            position: relative;
+        }
+
+        .pillar-card {
+            width: 100%;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 10;
+        }
+
+        .pillar-wrapper:hover .pillar-card {
+            transform: translateY(-15px) scale(1.05);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px var(--accent-glow);
+        }
+
+        .pillar-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 2px solid var(--border);
+        }
+
+        .pillar-name {
+            font-size: 0.85rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        .pillar-rev {
+            font-family: 'Orbitron';
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-weight: 900;
+        }
+
+        .pillar-base {
+            width: 60px;
+            background: linear-gradient(180deg, var(--accent) 0%, transparent 100%);
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            transition: height 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            opacity: 0.6;
+            min-height: 20px;
+        }
+
+        .pillar-base::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent);
+            box-shadow: 0 0 15px var(--accent);
+            border-radius: 10px;
+        }
+
+        .rank-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.75rem;
+            z-index: 20;
+        }
+
+        /* Category Grid Share */
+        .category-share-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .category-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2rem;
+        }
+
+        .category-title {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            font-weight: 900;
+            color: var(--text-dim);
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .share-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .share-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .share-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+
+        .share-pill {
+            flex-grow: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .share-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1.5s ease;
+            width: 0;
+        }
+
+        .share-label {
+            width: 40px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--emerald);
+        }
+
+        .stat-pill {
+            background: var(--accent-glow);
+            color: var(--accent);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            border: 1px solid var(--accent);
+        }
+
+        /* Insights View Specifics */
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        .variable-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .var-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            border-top: 3px solid var(--accent);
+        }
+
+        .var-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .var-value {
+            font-family: 'Orbitron';
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--text);
+        }
+
+        .var-unit {
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-left: 4px;
+        }
+
+        .insights-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .suggestion-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .suggestion-card:hover {
+            transform: translateY(-5px);
+            background: rgba(59, 130, 246, 0.15);
+            border-color: var(--accent);
+        }
+
+        .suggestion-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.25rem;
+        }
+
+        .implement-btn {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 12px;
+            border: 1px solid var(--accent);
+            background: var(--accent-glow);
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .implement-btn:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .implement-btn.deployed {
+            background: var(--emerald);
+            color: #000;
+            border-color: var(--emerald);
+            cursor: default;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .reset-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-dim);
+            font-weight: 800;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .reset-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            border-color: var(--text-dim);
+        }
+
+        .suggestion-icon {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            background: var(--accent-glow);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+
+        .log-console {
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            height: 500px;
+            overflow-y: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.1);
+        }
+
+        .log-entry {
+            margin-bottom: 0.75rem;
+            color: #10b981;
+            line-height: 1.4;
+            border-left: 2px solid #064e3b;
+            padding-left: 10px;
+        }
+
+        .log-timestamp {
+            color: var(--text-dim);
+            margin-right: 8px;
+            font-size: 0.75rem;
+        }
+
+        /* Sovereign Ops Styles */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--emerald));
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .metric-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .metric-value {
+            font-family: 'Orbitron';
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-trend {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .trend-up {
+            color: var(--emerald);
+        }
+
+        .trend-down {
+            color: #ef4444;
+        }
+
+        .system-health-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .health-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .health-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-healthy {
+            background: var(--emerald);
+            box-shadow: 0 0 10px var(--emerald);
+        }
+
+        .status-warning {
+            background: var(--gold);
+            box-shadow: 0 0 10px var(--gold);
+        }
+
+        .status-error {
+            background: #ef4444;
+            box-shadow: 0 0 10px #ef4444;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Core Config Styles */
+        .config-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .config-section h3 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent);
+        }
+
+        .config-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .config-item:last-child {
+            border-bottom: none;
+        }
+
+        .config-label {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .config-label-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .config-label-desc {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .config-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            min-width: 250px;
+            transition: all 0.3s;
+        }
+
+        .config-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: var(--accent);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            left: 27px;
+        }
+
+        .save-config-btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--accent);
+            background: var(--accent);
+            color: #000;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+
+        .save-config-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--accent-glow);
+        }
+
+        .activity-feed {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-left: 2px solid var(--accent);
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            min-width: 60px;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .activity-desc {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <aside>
+            <div class="logo">
+                <i data-lucide="activity"></i>
+                AGENT-21
+            </div>
+
+            <div
+                style="margin-top: 2rem; color: var(--text-dim); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.5rem; padding-left: 1rem;">
+                Core Analysis</div>
+            <nav style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <a href="#" class="nav-item" onclick="switchView('sovereign', this)">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Sovereign Ops</span>
+                </a>
+                <a href="/market/survey/" class="nav-item" target="_blank">
+                    <i data-lucide="clipboard-list"></i>
+                    <span>Market Survey</span>
+                </a>
+                <a href="#" class="nav-item active" onclick="switchView('market', this)">
+                    <i data-lucide="bar-chart-3"></i>
+                    <span>Market Insights</span>
+                </a>
+            </nav>
+
+            <div
+                style="margin-top: 2rem; color: var(--text-dim); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.5rem; padding-left: 1rem;">
+                Intelligent Systems</div>
+            <nav style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <a href="#" class="nav-item" onclick="switchView('insights', this)">
+                    <i data-lucide="brain-circuit"></i>
+                    <span>Business Insights</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchView('config', this)">
+                    <i data-lucide="settings"></i>
+                    <span>Core Config</span>
+                </a>
+            </nav>
+
+            <div
+                style="margin-top: 2rem; color: var(--text-dim); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.5rem; padding-left: 1rem;">
+                Advanced Features</div>
+            <nav style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <a href="#" class="nav-item" onclick="switchView('sql_healer', this)">
+                    <i data-lucide="wrench"></i>
+                    <span>SQL Healer</span>
+                </a>
+                <a href="/business/insights/scenario/" class="nav-item">
+                    <i data-lucide="users-round"></i>
+                    <span>Boardroom</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchView('digital_twin', this)">
+                    <i data-lucide="git-branch"></i>
+                    <span>Digital Twin</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchView('audit_trail', this)">
+                    <i data-lucide="shield-check"></i>
+                    <span>Audit Trail</span>
+                </a>
+            </nav>
+
+            <div style="margin-top: auto; padding: 1.5rem; background: rgba(255,255,255,0.02); border-radius: 20px;">
+                <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem;">STRATEGIC MODE</p>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div
+                        style="width: 10px; height: 10px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981;">
+                    </div>
+                    <span style="font-weight: 700; font-size: 0.9rem;">Intelligence Active</span>
+                </div>
+            </div>
+        </aside>
+
+        <main>
+            <div class="header-section">
+                <div class="title-group">
+                    <h1>Market Intelligence Dashboard</h1>
+                    <p>Quantitative analysis of product performance and sectoral penetration.</p>
+                </div>
+            </div>
+
+            <div id="marketView" class="view-section active">
+                <!-- Revenue Ranking Section -->
+                <div class="viz-card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+                        <h2><i data-lucide="award"></i> Top Revenue Generating Products</h2>
+                        <span class="stat-pill">Real-time Yield Analysis</span>
+                    </div>
+                    <div id="revenue-pillars" class="revenue-pillars-container">
+                        <!-- Dynamic Pillars -->
+                    </div>
+                </div>
+
+                <!-- Category Market Share -->
+                <div class="viz-card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+                        <h2><i data-lucide="pie-chart"></i> Category-wise Market Distribution</h2>
+                        <span class="stat-pill">Sectoral Dominance</span>
+                    </div>
+                    <div id="category-grid" class="category-share-grid">
+                        <!-- Dynamic Categories -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="sovereignView" class="view-section">
+                <!-- Sovereign Ops Dashboard -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Total Operations</span>
+                            <i data-lucide="activity" style="color: var(--accent);"></i>
+                        </div>
+                        <div class="metric-value" id="total-ops">1,247</div>
+                        <div class="metric-trend trend-up">
+                            <i data-lucide="trending-up" size="16"></i>
+                            <span>+12.5% from last week</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Active Sessions</span>
+                            <i data-lucide="users" style="color: var(--emerald);"></i>
+                        </div>
+                        <div class="metric-value" id="active-sessions">342</div>
+                        <div class="metric-trend trend-up">
+                            <i data-lucide="trending-up" size="16"></i>
+                            <span>+8.2% increase</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Response Time</span>
+                            <i data-lucide="zap" style="color: var(--gold);"></i>
+                        </div>
+                        <div class="metric-value" id="response-time">142ms</div>
+                        <div class="metric-trend trend-down">
+                            <i data-lucide="trending-down" size="16"></i>
+                            <span>-5.3% faster</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">System Uptime</span>
+                            <i data-lucide="clock" style="color: var(--accent);"></i>
+                        </div>
+                        <div class="metric-value" id="uptime">99.8%</div>
+                        <div class="metric-trend trend-up">
+                            <i data-lucide="check-circle" size="16"></i>
+                            <span>Excellent</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-card">
+                    <h2><i data-lucide="heart-pulse"></i> System Health Monitor</h2>
+                    <div class="system-health-grid">
+                        <div class="health-item">
+                            <div>
+                                <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 5px;">Database
+                                </div>
+                                <div class="health-status">
+                                    <div class="status-dot status-healthy"></div>
+                                    <span style="color: var(--emerald);">Operational</span>
+                                </div>
+                            </div>
+                            <span style="font-family: 'Orbitron'; font-weight: 900; color: var(--emerald);">100%</span>
+                        </div>
+
+                        <div class="health-item">
+                            <div>
+                                <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 5px;">API Gateway
+                                </div>
+                                <div class="health-status">
+                                    <div class="status-dot status-healthy"></div>
+                                    <span style="color: var(--emerald);">Operational</span>
+                                </div>
+                            </div>
+                            <span style="font-family: 'Orbitron'; font-weight: 900; color: var(--emerald);">98%</span>
+                        </div>
+
+                        <div class="health-item">
+                            <div>
+                                <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 5px;">AI Engine
+                                </div>
+                                <div class="health-status">
+                                    <div class="status-dot status-warning"></div>
+                                    <span style="color: var(--gold);">Monitoring</span>
+                                </div>
+                            </div>
+                            <span style="font-family: 'Orbitron'; font-weight: 900; color: var(--gold);">87%</span>
+                        </div>
+
+                        <div class="health-item">
+                            <div>
+                                <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 5px;">Cache Layer
+                                </div>
+                                <div class="health-status">
+                                    <div class="status-dot status-healthy"></div>
+                                    <span style="color: var(--emerald);">Operational</span>
+                                </div>
+                            </div>
+                            <span style="font-family: 'Orbitron'; font-weight: 900; color: var(--emerald);">95%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-card">
+                    <h2><i data-lucide="list"></i> Recent Activity Feed</h2>
+                    <div class="activity-feed" id="activity-feed">
+                        <div class="activity-item">
+                            <div class="activity-time">2m ago</div>
+                            <div class="activity-content">
+                                <div class="activity-title">System Backup Completed</div>
+                                <div class="activity-desc">Automated backup of all databases completed successfully
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-time">15m ago</div>
+                            <div class="activity-content">
+                                <div class="activity-title">Security Scan Passed</div>
+                                <div class="activity-desc">No vulnerabilities detected in latest security audit</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-time">1h ago</div>
+                            <div class="activity-content">
+                                <div class="activity-title">Performance Optimization</div>
+                                <div class="activity-desc">AI engine optimized query performance by 23%</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-time">3h ago</div>
+                            <div class="activity-content">
+                                <div class="activity-title">New User Registration</div>
+                                <div class="activity-desc">47 new users registered in the last hour</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="configView" class="view-section">
+                <!-- Core Config Dashboard -->
+                <div class="config-section">
+                    <h3><i data-lucide="database"></i> Database Configuration</h3>
+                    <div class="config-item">
+                        <div class="config-label">
+                            <span class="config-label-title">Database Host</span>
+                            <span class="config-label-desc">Primary database server endpoint</span>
+                        </div>
+                        <input type="text" class="config-input" id="db-host" value="172.16.17.18"
+                            placeholder="Enter host">
+                    </div>
+                    <div class="config-item">
+                        <div class="config-label">
+                            <span class="config-label-title">Database Port</span>
+                            <span class="config-label-desc">Connection port number</span>
+                        </div>
+                        <input type="text" class="config-input" id="db-port" value="8000" placeholder="Enter port">
+                    </div>
+                    <div class="config-item">
+                        <div class="config-label">
+                            <span class="config-label-title">Connection Pooling</span>
+                            <span class="config-label-desc">Enable connection pool for better performance</span>
+                        </div>
+                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3><i data-lucide="brain"></i> AI Engine Settings</h3>
+                    <div class="config-item">
+                        <div class="config-label">
+                            <span class="config-label-title">Model Temperature</span>
+                            <span class="config-label-desc">Controls randomness in AI responses (0.0 - 1.0)</span>
+                        </div>
+                        <input type="number" class="config-input" id="ai-temp" value="0.7" step="0.1" min="0" max="1">
+                    </div>
+                    <div class="config-item">
+                        <div class="config-label">
+                            <span class="config-label-title">Max Tokens</span>
+                            <span class="config-label-desc">Maximum response length</span>
+                        </div>
+                        <input type="number" class="config-input" id="ai-tokens" value="2048" step="256">
+                    </div>
+                    <div class="config-item">
+                        <div class="config-label">
+                            <span class="config-label-title">Auto-Suggestions</span>
+                            <span class="config-label-desc">Enable automatic strategic suggestions</span>
+                        </div>
+                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3><i data-lucide="shield"></i> Security & Privacy</h3>
+                    <div class="config-item">
+                        <div class="config-label">
+                            <span class="config-label-title">Two-Factor Authentication</span>
+                            <span class="config-label-desc">Require 2FA for all admin actions</span>
+                        </div>
+                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                    </div>
+                    <div class="config-item">
+                        <div class="config-label">
+                            <span class="config-label-title">Session Timeout</span>
+                            <span class="config-label-desc">Auto-logout after inactivity (minutes)</span>
+                        </div>
+                        <input type="number" class="config-input" id="session-timeout" value="30" step="5" min="5">
+                    </div>
+                    <div class="config-item">
+                        <div class="config-label">
+                            <span class="config-label-title">Audit Logging</span>
+                            <span class="config-label-desc">Log all system activities</span>
+                        </div>
+                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3><i data-lucide="bell"></i> Notifications</h3>
+                    <div class="config-item">
+                        <div class="config-label">
+                            <span class="config-label-title">Email Notifications</span>
+                            <span class="config-label-desc">Receive alerts via email</span>
+                        </div>
+                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                    </div>
+                    <div class="config-item">
+                        <div class="config-label">
+                            <span class="config-label-title">Anomaly Alerts</span>
+                            <span class="config-label-desc">Get notified of detected anomalies</span>
+                        </div>
+                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                    </div>
+                    <div class="config-item">
+                        <div class="config-label">
+                            <span class="config-label-title">System Updates</span>
+                            <span class="config-label-desc">Notifications for system updates</span>
+                        </div>
+                        <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+                    </div>
+                    <button class="save-config-btn" onclick="saveConfiguration()">
+                        <i data-lucide="save" size="20"></i>
+                        Save Configuration
+                    </button>
+                </div>
+            </div>
+
+            <div id="insightsView" class="view-section">
+                <!-- Variables Strip -->
+                <div class="variable-grid">
+                    <div class="var-card">
+                        <div class="var-label">Production Throughput</div>
+                        <div class="var-value"><span id="val-throughput">94.8</span><span class="var-unit">%</span>
+                        </div>
+                        <div style="margin-top: 8px; font-size: 0.7rem; color: #10b981;">+2.4% vs last cycle</div>
+                    </div>
+                    <div class="var-card" style="border-top-color: var(--gold);">
+                        <div class="var-label">Pricing Multiplier</div>
+                        <div class="var-value"><span id="val-multiplier">1.25</span><span class="var-unit">x</span>
+                        </div>
+                        <div style="margin-top: 8px; font-size: 0.7rem; color: var(--gold);">Peak Demand Reactive</div>
+                    </div>
+                    <div class="var-card" style="border-top-color: var(--emerald);">
+                        <div class="var-label">Safety Stock Level</div>
+                        <div class="var-value"><span id="val-stock">842</span><span class="var-unit">units</span></div>
+                        <div style="margin-top: 8px; font-size: 0.7rem; color: var(--emerald);">Optimized for Region A
+                        </div>
+                    </div>
+                    <div class="var-card" style="border-top-color: #ec4899;">
+                        <div class="var-label">Delivery SLA Target</div>
+                        <div class="var-value"><span id="val-sla">2.4</span><span class="var-unit">days</span></div>
+                        <div style="margin-top: 8px; font-size: 0.7rem; color: #ec4899;">Efficiency Mode Active</div>
+                    </div>
+                </div>
+
+                <div class="insights-layout">
+                    <!-- Suggestive Measures -->
+                    <div class="viz-card">
+                        <h2><i data-lucide="lightbulb"></i> Suggestive Strategic Measures</h2>
+                        <div id="strategic-measures-container">
+                            <!-- Dynamic Measures Injected Here -->
+                        </div>
+                    </div>
+
+                    <!-- Agent Logs -->
+                    <div class="viz-card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                            <h2><i data-lucide="terminal"></i> Agent Intelligence Logs</h2>
+                            <i data-lucide="refresh-cw" size="16" class="spin-slow"
+                                style="color: var(--accent); cursor: pointer;"></i>
+                        </div>
+                        <div class="log-console" id="insightLogs">
+                            <div class="log-entry"><span class="log-timestamp">02:05:12</span> Initializing sovereign
+                                intelligence scan...</div>
+                            <div class="log-entry"><span class="log-timestamp">02:05:15</span> Fetching revenue vectors
+                                from Supabase edge...</div>
+                            <div class="log-entry"><span class="log-timestamp">02:05:18</span> Anomaly detection running
+                                on sectoral partitioning...</div>
+                            <div class="log-entry"><span class="log-timestamp">02:05:22</span> Strategic measure
+                                identified: Inventory optimization.</div>
+                            <div class="log-entry"><span class="log-timestamp">02:05:25</span> Dynamic Pricing engine
+                                recalculating multipliers...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADVANCED FEATURES UI SECTIONS -->
+            {% include 'advanced_features_ui.html' %}
+
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+
+
+        let strategicMeasures = [];
+
+
+        async function initDashboard() {
+            try {
+                const res = await fetch('/api/business/data/');
+                const data = await res.json();
+
+                renderLeaderboard(data.revenue_stats);
+                renderCategoryShare(data.revenue_stats);
+                renderStrategicMeasures();
+                startLogSimulation();
+            } catch (err) {
+                console.error("Dashboard failed to initialize:", err);
+            }
+        }
+
+        function switchView(viewId, el) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId + 'View').classList.add('active');
+
+            // Update header based on view
+            const titleMap = {
+                'sovereign': { title: 'Sovereign Operations', desc: 'Real-time monitoring and operational intelligence.' },
+                'market': { title: 'Market Intelligence Dashboard', desc: 'Quantitative analysis of product performance and sectoral penetration.' },
+                'insights': { title: 'Business Intelligence', desc: 'AI-powered strategic recommendations and insights.' },
+                'config': { title: 'Core Configuration', desc: 'System settings and operational parameters.' },
+                'sql_healer': { title: 'Self-Healing SQL Re-Sensing', desc: 'Autonomous SQL debugging and error correction system.' },
+                'boardroom': { title: 'Agentic Boardroom', desc: 'Multi-agent negotiation for strategic decision making.' },
+                'digital_twin': { title: 'Predictive Digital Twin', desc: 'Simulate what-if scenarios to forecast business impacts.' },
+                'audit_trail': { title: 'Immutable Audit Trail', desc: 'Tamper-evident record of all agent decisions and actions.' }
+            };
+
+            if (titleMap[viewId]) {
+                document.querySelector('.title-group h1').textContent = titleMap[viewId].title;
+                document.querySelector('.title-group p').textContent = titleMap[viewId].desc;
+            }
+
+            // Re-trigger animations if needed
+            if (viewId === 'market') {
+                // Clear and re-render to trigger animations
+                document.getElementById('revenue-pillars').innerHTML = '';
+                document.getElementById('category-grid').innerHTML = '';
+                initDashboard();
+            } else if (viewId === 'insights') {
+                renderStrategicMeasures();
+            } else if (viewId === 'sovereign') {
+                initSovereignOps();
+            } else if (viewId === 'config') {
+                lucide.createIcons();
+            } else if (viewId === 'sql_healer') {
+                lucide.createIcons();
+            } else if (viewId === 'boardroom') {
+                if (typeof loadBoardroomHistory !== 'undefined') loadBoardroomHistory();
+                lucide.createIcons();
+            } else if (viewId === 'digital_twin') {
+                lucide.createIcons();
+            } else if (viewId === 'audit_trail') {
+                if (typeof loadAuditCycles !== 'undefined') loadAuditCycles();
+                if (typeof verifyAuditIntegrity !== 'undefined') verifyAuditIntegrity();
+                lucide.createIcons();
+            }
+        }
+
+        function initSovereignOps() {
+            // Animate metrics with random updates
+            setInterval(() => {
+                const totalOps = document.getElementById('total-ops');
+                if (totalOps) {
+                    const current = parseInt(totalOps.textContent.replace(',', ''));
+                    totalOps.textContent = (current + Math.floor(Math.random() * 10)).toLocaleString();
+                }
+
+                const activeSessions = document.getElementById('active-sessions');
+                if (activeSessions) {
+                    const current = parseInt(activeSessions.textContent);
+                    activeSessions.textContent = current + Math.floor(Math.random() * 5 - 2);
+                }
+
+                const responseTime = document.getElementById('response-time');
+                if (responseTime) {
+                    const current = parseInt(responseTime.textContent);
+                    responseTime.textContent = (current + Math.floor(Math.random() * 20 - 10)) + 'ms';
+                }
+            }, 5000);
+
+            // Add new activity items periodically
+            const activities = [
+                { title: 'Cache Refresh', desc: 'Redis cache updated with latest data' },
+                { title: 'API Rate Limit Check', desc: 'All endpoints within normal limits' },
+                { title: 'Database Query Optimized', desc: 'Slow query detected and optimized' },
+                { title: 'User Authentication', desc: 'New user session established' },
+                { title: 'Data Sync Complete', desc: 'External data sources synchronized' }
+            ];
+
+            setInterval(() => {
+                const feed = document.getElementById('activity-feed');
+                if (feed) {
+                    const activity = activities[Math.floor(Math.random() * activities.length)];
+                    const item = document.createElement('div');
+                    item.className = 'activity-item';
+                    item.innerHTML = `
+                        <div class="activity-time">Just now</div>
+                        <div class="activity-content">
+                            <div class="activity-title">${activity.title}</div>
+                            <div class="activity-desc">${activity.desc}</div>
+                        </div>
+                    `;
+                    feed.insertBefore(item, feed.firstChild);
+                    if (feed.children.length > 10) {
+                        feed.removeChild(feed.lastChild);
+                    }
+                }
+            }, 15000);
+
+            lucide.createIcons();
+        }
+
+        function toggleSwitch(element) {
+            element.classList.toggle('active');
+        }
+
+        function saveConfiguration() {
+            const btn = event.target.closest('.save-config-btn');
+            const originalHTML = btn.innerHTML;
+
+            btn.innerHTML = '<i data-lucide="loader" class="spin-slow"></i> Saving...';
+            lucide.createIcons();
+
+            // Simulate save operation
+            setTimeout(() => {
+                btn.innerHTML = '<i data-lucide="check-circle"></i> Configuration Saved!';
+                btn.style.background = 'var(--emerald)';
+                lucide.createIcons();
+
+                // Get all config values
+                const config = {
+                    database: {
+                        host: document.getElementById('db-host').value,
+                        port: document.getElementById('db-port').value
+                    },
+                    ai: {
+                        temperature: document.getElementById('ai-temp').value,
+                        maxTokens: document.getElementById('ai-tokens').value
+                    },
+                    security: {
+                        sessionTimeout: document.getElementById('session-timeout').value
+                    }
+                };
+
+                console.log('Configuration saved:', config);
+                addInsightLog('⚙️ CONFIGURATION UPDATE: System settings saved successfully');
+
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.background = '';
+                    lucide.createIcons();
+                }, 2000);
+            }, 1500);
+        }
+
+        async function renderStrategicMeasures() {
+            const container = document.getElementById('strategic-measures-container');
+            if (!container) return;
+
+            // Render loading state
+            container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-dim);">Loading AI Insights...</div>';
+
+            const SQL_query_SUGGESTIVE = "SELECT * FROM suggestion_logs ORDER BY id DESC LIMIT 3";
+            try {
+                const SuggestiveDatasetRes = await fetch("http://172.16.6.83:8000/api/query/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ query: SQL_query_SUGGESTIVE })
+                });
+
+                const SuggestiveDataset = await SuggestiveDatasetRes.json();
+                console.log("Suggestions Fetch:", SuggestiveDataset);
+
+                // Support both 'query_results' and 'data' keys
+                const results = SuggestiveDataset.query_results || SuggestiveDataset.data;
+                console.log("Raw results array:", results);
+
+                if (results && Array.isArray(results)) {
+                    const newMeasures = [];
+
+                    results.forEach((record, index) => {
+                        try {
+                            // suggestion_data might be a string or object depending on DB driver
+                            let sData = record.suggestion_data;
+                            if (typeof sData === 'string') sData = JSON.parse(sData);
+
+                            const actions = sData.recommended_actions;
+                            if (!actions) return;
+
+                            const impacts = [];
+
+                            // 1. SLA (Days Change)
+                            if (actions.delivery_sla_target_change_days) {
+                                const base = 2.4;
+                                impacts.push({
+                                    targetId: 'val-sla',
+                                    start: base,
+                                    end: base + parseFloat(actions.delivery_sla_target_change_days),
+                                    unit: ' days'
+                                });
+                            }
+
+                            // 2. Safety Stock (% Change)
+                            if (actions.safety_stock_level_change_percent) {
+                                const base = 842;
+                                const change = parseFloat(actions.safety_stock_level_change_percent);
+                                impacts.push({
+                                    targetId: 'val-stock',
+                                    start: base,
+                                    end: Math.round(base * (1 + change / 100)),
+                                    unit: ' units'
+                                });
+                            }
+
+                            // 3. Pricing Multiplier (% Change)
+                            if (actions.dynamic_pricing_multiplier_change_percent) {
+                                const base = 1.25;
+                                const change = parseFloat(actions.dynamic_pricing_multiplier_change_percent);
+                                impacts.push({
+                                    targetId: 'val-multiplier',
+                                    start: base,
+                                    end: parseFloat((base * (1 + change / 100)).toFixed(2)),
+                                    unit: 'x'
+                                });
+                            }
+
+                            // 4. Throughput (% Change)
+                            if (actions.production_throughput_target_change_percent) {
+                                const base = 94.8;
+                                const change = parseFloat(actions.production_throughput_target_change_percent);
+                                let endVal = parseFloat((base * (1 + change / 100)).toFixed(1));
+                                if (endVal > 100) endVal = 100; // Cap at 100%
+
+                                impacts.push({
+                                    targetId: 'val-throughput',
+                                    start: base,
+                                    end: endVal,
+                                    unit: '%'
+                                });
+                            }
+
+                            if (impacts.length > 0) {
+                                newMeasures.push({
+                                    id: `suggestion-${record.id}`,
+                                    title: `AI Diagnosed Anomaly #${record.id}`,
+                                    description: sData.diagnosis || "Automated strategic response generated by Agent-21.",
+                                    impacts: impacts,
+                                    deployLog: `AUTOMATED RESPONSE: Executing protocol #${record.id}`,
+                                    resetLog: `MANUAL OVERRIDE: Reverting protocol #${record.id}`
+                                });
+                            }
+                        } catch (e) {
+                            console.error("Error parsing suggestion:", e);
+                        }
+                    });
+
+                    // Since we started empty, we just take the new ones
+                    strategicMeasures = newMeasures;
+                }
+            } catch (err) {
+                console.error("Failed to fetch suggestions:", err);
+                container.innerHTML += '<div style="color: red; font-size: 0.8rem;">Remote Sync Failed</div>';
+            }
+
+            if (strategicMeasures.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-dim);">No strategic measures available.</div>';
+                return;
+            }
+
+            container.innerHTML = strategicMeasures.map(measure => `
+                <div class="suggestion-card">
+                    <div class="suggestion-header">
+                        <div>
+                            <h4 style="margin-bottom: 4px;">${measure.title}</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-dim);">${measure.description}</p>
+                        </div>
+                    </div>
+                    <div class="action-group">
+                        <button class="implement-btn" onclick="implementMeasure('${measure.id}', this)">
+                            <i data-lucide="play-circle" size="18"></i> Deploy
+                        </button>
+                        <button class="reset-btn" onclick="resetMeasure('${measure.id}', this)">
+                            <i data-lucide="rotate-ccw" size="16"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        async function startLogSimulation() {
+            console.log("Starting log simulation...");
+            const SQL_query = 'SELECT * FROM "Anomaly" ORDER BY anomaly_id DESC LIMIT 5;';
+
+            const msgs = [
+                "Scanning delivery SLA deviations...",
+                "Optimizing factory throughput targets...",
+                "Calculating safety stock for Electronics...",
+                "Dynamic pricing multiplier updated to 1.25x",
+                "Heuristic analysis of market share shift complete.",
+                "Agent-21 sensing layer confirmed status: Healthy."
+            ];
+
+            try {
+                // Targeted access to external API
+                const datasetRes = await fetch("http://172.16.6.83:8000/api/query/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        query: SQL_query
+                    })
+                });
+
+                const data = await datasetRes.json();
+                console.log("Remote Data Success:", data);
+
+                if (data && (data.data || data.query_results)) {
+                    const list = data.data || data.query_results;
+                    list.forEach(item => {
+                        const anomalyMsg = `ANOMALY DETECTED: ${item.type} | ${item.description || 'No description'}`;
+                        msgs.push(anomalyMsg);
+                        // Also log it immediately for impact
+                        addInsightLog(`🚨 ${anomalyMsg}`);
+                    });
+                }
+            } catch (err) {
+                console.error("REMOTE CONNECTION FAILED (172.16.17.18):", err);
+                addInsightLog(`❌ SENSING CORE ERROR: ${err.message}`);
+                addInsightLog("ADVISORY: Remote cluster 172.16.17.18 is unreachable. Falling back to local heuristics.");
+            }
+
+            setInterval(() => {
+                const msg = msgs[Math.floor(Math.random() * msgs.length)];
+                addInsightLog(msg);
+            }, 6000);
+        }
+
+        function addInsightLog(msg) {
+            const console = document.getElementById('insightLogs');
+            const time = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.className = 'log-entry';
+            div.innerHTML = `<span class="log-timestamp">${time}</span> ${msg}`;
+            console.prepend(div);
+            if (console.children.length > 50) console.removeChild(console.lastChild);
+            lucide.createIcons();
+        }
+
+        function implementMeasure(id, btn) {
+            const measure = strategicMeasures.find(m => m.id === id);
+            if (!measure || btn.classList.contains('deployed')) return;
+
+            btn.innerHTML = '<i data-lucide="loader" class="spin-slow"></i> Deploying...';
+            lucide.createIcons();
+
+            setTimeout(() => {
+                btn.className = 'implement-btn deployed';
+                btn.innerHTML = '<i data-lucide="check-circle"></i> Deployed';
+                lucide.createIcons();
+
+                // Dynamic effects execution
+                if (measure.impacts) {
+                    measure.impacts.forEach(impact => {
+                        updateVariableValue(impact.targetId, impact.start, impact.end, impact.unit);
+                    });
+                }
+                addInsightLog(measure.deployLog || "Strategy Deployed.");
+            }, 1000);
+        }
+
+        function resetMeasure(id, btn) {
+            const measure = strategicMeasures.find(m => m.id === id);
+            if (!measure) return;
+
+            const card = btn.closest('.suggestion-card');
+            const deployBtn = card.querySelector('.implement-btn');
+
+            deployBtn.className = 'implement-btn';
+            deployBtn.innerHTML = '<i data-lucide="play-circle" size="18"></i> Deploy';
+            lucide.createIcons();
+
+            // Revert effects dynamically
+            if (measure.impacts) {
+                measure.impacts.forEach(impact => {
+                    updateVariableValue(impact.targetId, impact.end, impact.start, impact.unit, '#f8fafc');
+                });
+            }
+            addInsightLog(measure.resetLog || "System Rollback Completed.");
+        }
+
+        function updateVariableValue(id, start, end, unit, signalColor = '#10b981') {
+            const el = document.getElementById(id);
+            if (!el) return;
+            let current = parseFloat(start);
+            const steps = 30;
+            const increment = (parseFloat(end) - current) / steps;
+            let count = 0;
+
+            const timer = setInterval(() => {
+                count++;
+                current += increment;
+                el.innerText = current.toFixed(id.includes('stock') ? 0 : 1);
+                if (count >= steps) {
+                    clearInterval(timer);
+                    el.innerText = parseFloat(end).toFixed(id.includes('stock') ? 0 : 1);
+                    el.style.color = signalColor;
+                    el.style.textShadow = `0 0 10px ${signalColor}`;
+                    setTimeout(() => {
+                        el.style.color = '';
+                        el.style.textShadow = '';
+                    }, 3000);
+                }
+            }, 50);
+        }
+
+        function renderLeaderboard(stats) {
+            const container = document.getElementById('revenue-pillars');
+            const sorted = stats.sort((a, b) => b.total_revenue - a.total_revenue).slice(0, 7);
+            const maxRev = sorted[0].total_revenue;
+
+            sorted.forEach((p, i) => {
+                const height = (p.total_revenue / maxRev) * 250;
+                const wrapper = document.createElement('div');
+                wrapper.className = 'pillar-wrapper';
+                wrapper.innerHTML = `
+                    <div class="rank-badge">${i + 1}</div>
+                    <div class="pillar-card">
+                        <img src="${p.image_url}" class="pillar-img">
+                        <div class="pillar-name">${p.product_name}</div>
+                        <div class="pillar-rev">$${(p.total_revenue / 1000).toFixed(1)}k</div>
+                    </div>
+                    <div class="pillar-base" id="pillar-${p.product_id}" style="height: 0px"></div>
+                `;
+                container.appendChild(wrapper);
+
+                // Animate pillar growth
+                setTimeout(() => {
+                    document.getElementById(`pillar-${p.product_id}`).style.height = height + 'px';
+                }, 200 + (i * 150));
+            });
+        }
+
+        function renderCategoryShare(stats) {
+            const grid = document.getElementById('category-grid');
+
+            // Group by category
+            const categories = {};
+            stats.forEach(s => {
+                if (!categories[s.category]) categories[s.category] = [];
+                categories[s.category].push(s);
+            });
+
+            Object.keys(categories).forEach(cat => {
+                const box = document.createElement('div');
+                box.className = 'category-box';
+
+                const catStats = categories[cat].sort((a, b) => b.unit_share_percent - a.unit_share_percent);
+                const totalUnitShare = catStats.reduce((acc, curr) => acc + (curr.unit_share_percent || 0), 0);
+
+                let shareHtml = '';
+                catStats.slice(0, 5).forEach(p => {
+                    const share = p.unit_share_percent || 0;
+                    shareHtml += `
+                        <div class="share-item">
+                            <img src="${p.image_url}" class="share-img">
+                            <div style="flex-grow:1; font-weight: 700; font-size: 0.85rem;">${p.product_name}</div>
+                            <div class="share-pill">
+                                <div class="share-fill" style="width: ${share}%; background: var(--accent);"></div>
+                            </div>
+                            <div class="share-label">${share}%</div>
+                        </div>
+                    `;
+                });
+
+                box.innerHTML = `
+                    <div class="category-title">
+                        <span>${cat}</span>
+                        <span style="color: var(--emerald); font-family: 'Orbitron';">${catStats.length} ASSETS</span>
+                    </div>
+                    <div class="share-list">
+                        ${shareHtml}
+                    </div>
+                `;
+                grid.appendChild(box);
+            });
+        }
+
+        initDashboard();
+    </script>
+
+    <!-- Advanced Features JavaScript -->
+    <script>
+        {% include 'advanced_features_script.html' %}
+    </script>
+</body>
+
+</html>
