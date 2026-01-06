@@ -8,8 +8,8 @@ django.setup()
 
 from core.views import automate_ad,advertise
 
-SUPABASE_URL = "https://ubvcncqceakcmosxjkpx.supabase.co"
-SUPABASE_KEY = "sb_publishable_mXdogYpuflKU5JDneBpQNw_fJfZZjlH"
+SUPABASE_URL = "<ENTER_SUPABASE_URL>"
+SUPABASE_KEY = "<ENTER_SUPABASE_APIKEY>"
 
 
 # ---------- real async worker ----------
@@ -72,3 +72,4 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         print("\n👋 Listener stopped manually")
+
