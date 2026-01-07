@@ -3,8 +3,7 @@ import time
 import spacy
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
-# Load spaCy model ONCE (very important for performance)
+# load spacy model
 nlp = spacy.load("en_core_web_sm")
 
 REASONING_TRIGGERS = {
@@ -32,7 +31,7 @@ def classify_reasoning(query: str) -> dict:
     start_time = time.time()
     doc = nlp(query.lower())
 
-    # 1️⃣ Linguistic reasoning detection
+    # Linguistic reasoning detection
     for token in doc:
         if token.lemma_ in REASONING_TRIGGERS:
             latency = round((time.time() - start_time) * 1000, 2)
@@ -42,7 +41,7 @@ def classify_reasoning(query: str) -> dict:
                 "response_time_ms": latency
             }
 
-    # 2️⃣ Causal / interrogative structure
+    # Causal / interrogative structure
     if "?" in query and any(tok.dep_ in {"advmod", "mark"} for tok in doc):
         latency = round((time.time() - start_time) * 1000, 2)
         return {
@@ -82,3 +81,4 @@ def reasoning_gate_api(request):
             {"error": "Invalid JSON input"},
             status=400
         )
+
