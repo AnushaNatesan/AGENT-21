@@ -11,8 +11,8 @@ import hashlib
 import redis
 from supabase import create_client
 
-SUPABASE_URL = "https://ubvcncqceakcmosxjkpx.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVidmNuY3FjZWFrY21vc3hqa3B4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0NTAyODAsImV4cCI6MjA4MzAyNjI4MH0.k4HrBg0-s424zl1-em8Nj4vDLPRtFb6Ad8UxBIZM1m0"
+SUPABASE_URL = <URL>
+SUPABASE_KEY = <KEY>
 
 # Redis Configuration
 REDIS_HOST = 'localhost'
@@ -31,10 +31,10 @@ try:
     )
     redis_client.ping()
     REDIS_ENABLED = True
-    print("✅ Redis cache ENABLED")
+    print("Redis cache ENABLED")
 except Exception as e:
     REDIS_ENABLED = False
-    print(f"⚠️  Redis cache DISABLED: {str(e)}")
+    print(f"Redis cache DISABLED: {str(e)}")
 
 # Initialize Supabase client
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
@@ -125,9 +125,9 @@ def execute_supabase_query(sql_query):
         safe_data = redact_pii(data)
         row_count = len(data) if isinstance(data, list) else 1
         
-        print(f"  ✅ Supabase query successful")
-        print(f"  ⏱️  Query time: {execution_time}ms")
-        print(f"  📊 Rows returned: {row_count}")
+        print(f" Supabase query successful")
+        print(f" Query time: {execution_time}ms")
+        print(f" Rows returned: {row_count}")
         
         return {
             "success": True,
@@ -188,7 +188,7 @@ def execute_sql_query(request):
         
         # Generate cache key
         cache_key = generate_cache_key(sql_query)
-        print(f"🔑 Cache key: {cache_key}")
+        print(f"Cache key: {cache_key}")
         
         if bust_cache and REDIS_ENABLED:
             print("Cache bust requested")
@@ -200,7 +200,7 @@ def execute_sql_query(request):
         if not bust_cache:
             cached_result = get_cached_result(cache_key)
             if cached_result:
-                print("✅ CACHE HIT")
+                print("CACHE HIT")
                 print(f"Total response: {cached_result['cache_info'].get('retrieval_time_ms', '?')}ms")
                 
                 # Show data sample
@@ -225,27 +225,27 @@ def execute_sql_query(request):
         if result['success']:
             data_to_show = result.get('data', [])
             if isinstance(data_to_show, list) and len(data_to_show) > 0:
-                print(f"📄 Results (first row):")
+                print(f"Results (first row):")
                 row_str = json.dumps(data_to_show[0], default=str)
                 print(f"   {row_str[:80]}...")
                 
                 if len(data_to_show) > 1:
                     print(f"   ... and {len(data_to_show) - 1} more rows")
         
-        print(f"⏱️  Total response: {result.get('execution_time_ms', 0)}ms")
+        print(f"Total response: {result.get('execution_time_ms', 0)}ms")
         print("="*70)
         
         return JsonResponse(result)
         
     except json.JSONDecodeError:
-        print("❌ Invalid JSON")
+        print("Invalid JSON")
         print("="*70)
         return JsonResponse({
             "success": False,
             "error": "Invalid JSON"
         }, status=400)
     except Exception as e:
-        print(f"❌ Server error: {str(e)}")
+        print(f"Server error: {str(e)}")
         print("="*70)
         return JsonResponse({
             "success": False,
@@ -350,4 +350,5 @@ def test_redis(request):
             "success": False,
             "redis": "error",
             "error": str(e)
+
         })
