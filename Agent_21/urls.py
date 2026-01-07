@@ -1,70 +1,50 @@
+"""agentic_backend URL Configuration
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/3.1/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
 from django.contrib import admin
 from django.urls import path
-from . import query_executer
-from App import views as app_views
-from App.views_scenario import scenario_simulator
-from App import views
-
+from . import query_executor
+from . import supabase_redis_api 
+from .security.intent_api import classify_intent
+from .apis.insert_agent_log import insert_agent_log
+from .apis.market_survey import market_survey
+from .apis.insert_suggestions import insert_suggestion
+from .apis.reasoning_gate import reasoning_gate_api
+from .apis.insert_products import insert_products
+from .apis.translate_request import translate_to_english
+from .apis.translate_response import translate_response
+from .voice.voice import voice_webhook
+from .voice.voice import agent_response
 urlpatterns = [
-    path('market/survey/', app_views.market_survey, name='market_survey'),
-    path('', app_views.dashboard, name='dashboard'),
     path('admin/', admin.site.urls),
-    path('execute-sql/', query_executer.agent_intelligence_view, name='execute_sql'),
-    # UI PAGE
-    path(
-        "business/insights/scenario/",
-        views.boardroom_ui,
-        name="boardroom_ui"
-    ),
+    path('execute-sql/', query_executor.execute_sql_query, name='execute_sql'),
+    path('api/query/', supabase_redis_api.execute_sql_query, name='sql_query'),
+    path('api/cache/stats/', supabase_redis_api.cache_stats, name='cache_stats'),
+    path('api/cache/clear/', supabase_redis_api.clear_cache, name='clear_cache'),
+    path('api/cache/test/', supabase_redis_api.test_redis, name='test_redis'),
 
-    # DRF API
-    path(
-        "api/boardroom/simulate/",
-        scenario_simulator,
-        name="scenario_simulator"
-    ),
-    # Customer Portal
-    path('customer/login/', app_views.customer_login, name='customer_login'),
-    path('customer/signup/', app_views.customer_signup, name='customer_signup'),
-    path('customer/dashboard/', app_views.customer_dashboard, name='customer_dashboard'),
-    
-    # API Endpoints
-    path('api/products/', app_views.get_customer_products, name='api_products'),
-    path('api/products/<int:product_id>/similar/', app_views.get_similar_products, name='api_similar_products'),
-    path('api/cart/add/', app_views.add_to_cart, name='api_cart_add'),
-    path('api/cart/details/', app_views.get_cart_details, name='api_cart_details'),
-    path('api/cart/remove/', app_views.remove_from_cart, name='api_cart_remove'),
-    path('api/order/confirm/', app_views.confirm_order, name='api_order_confirm'),
-    path('api/orders/history/', app_views.get_order_history, name='api_order_history'),
-    path('api/orders/<int:order_id>/tracking/', app_views.get_order_tracking, name='api_order_tracking'),
-    path('api/business/data/', app_views.get_business_data, name='api_business_data'),
-    path('business/insights/', app_views.business_insights, name='business_insights'),
+    path('api/intent/classify/', classify_intent, name='classify_intent'),
 
-    # Wishlist & Settings APIs
-    path('api/wishlist/', app_views.manage_wishlist, name='api_wishlist'),
-    path('api/wishlist/details/', app_views.get_wishlist_details, name='api_wishlist_details'),
-    path('api/settings/', app_views.manage_settings, name='api_settings'),
-    
-    # ========================================
-    # ADVANCED FEATURES API ENDPOINTS
-    # ========================================
-    
-    # Self-Healing SQL Re-Sensing
-    path('api/advanced/sql/healing/', app_views.api_self_healing_sql, name='api_self_healing_sql'),
-    
-    # Agentic Boardroom (Multi-Agent Negotiation)
-    path('api/advanced/boardroom/convene/', app_views.api_convene_boardroom, name='api_convene_boardroom'),
-    path('api/advanced/boardroom/history/', app_views.api_boardroom_history, name='api_boardroom_history'),
-    
-    # Digital Twin (What-If Simulator)
-    path('api/advanced/simulation/run/', app_views.api_run_simulation, name='api_run_simulation'),
-    path('api/advanced/simulation/history/', app_views.api_simulation_history, name='api_simulation_history'),
-    path('api/advanced/simulation/compare/', app_views.api_compare_scenarios, name='api_compare_scenarios'),
-    
-    # Immutable Audit Trail
-    path('api/advanced/audit/verify/', app_views.api_verify_audit_integrity, name='api_verify_audit'),
-    path('api/advanced/audit/cycles/', app_views.api_get_audit_cycles, name='api_get_audit_cycles'),
-    path('api/advanced/audit/search/', app_views.api_search_audit_trail, name='api_search_audit'),
-    path('api/advanced/audit/report/', app_views.api_generate_audit_report, name='api_audit_report'),
-    path('api/advanced/audit/cycle/<str:cycle_id>/', app_views.api_get_cycle_details, name='api_cycle_details'),
+    path('api/agent/log/', insert_agent_log, name='insert_agent_log'),
+    path('api/market/survey/', market_survey, name='market_survey_api'),
+
+    path('api/suggestions/insert/', insert_suggestion, name='insert_suggestion'),
+    path('api/reasoning_gate/', reasoning_gate_api, name='reasoning_gate_api'),
+    path('api/products/insert/', insert_products, name='insert_products'),
+    path('api/translate/request/', translate_to_english, name='translate_to_english'),
+    path('api/translate/response/', translate_response, name='translate_response'),
+    # path('twilio/voice/', voice_webhook, name='voice_webhook'),
+    # path('twilio/agent-response/', agent_response, name='agent_response'),
 ]
