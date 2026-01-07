@@ -1,6 +1,5 @@
 """
-Simple AI Intent Classifier API
-Single endpoint for classifying query intent
+Endpoint for classifying query intent
 """
 
 from django.http import JsonResponse
@@ -30,7 +29,7 @@ def classify_intent(request):
     """
     
     print("\n" + "="*70)
-    print("🤖 AI INTENT CLASSIFIER")
+    print("AI INTENT CLASSIFIER")
     print("="*70)
     
     start_time = time.time()
@@ -40,7 +39,7 @@ def classify_intent(request):
         data = json.loads(request.body)
         query = data.get('query', '').strip()
         
-        print(f"📝 Query: {query[:100]}..." if len(query) > 100 else f"📝 Query: {query}")
+        print(f"Query: {query[:100]}..." if len(query) > 100 else f"📝 Query: {query}")
         
         if not query:
             return JsonResponse({
@@ -60,11 +59,11 @@ def classify_intent(request):
         execution_time = round((time.time() - start_time) * 1000, 2)
         
         # Console logging
-        print(f"📊 Decision: {result['decision']}")
-        print(f"📈 Category: {result['category']}")
-        print(f"🎯 Confidence: {result['confidence']:.1%}")
-        print(f"💡 Reason: {result['reason'][:100]}...")
-        print(f"⏱️  Time: {execution_time}ms")
+        print(f"Decision: {result['decision']}")
+        print(f"Category: {result['category']}")
+        print(f"Confidence: {result['confidence']:.1%}")
+        print(f"Reason: {result['reason'][:100]}...")
+        print(f"Time: {execution_time}ms")
         print("="*70)
         
         # Prepare response (only essential fields)
@@ -79,7 +78,7 @@ def classify_intent(request):
         return JsonResponse(response_data)
         
     except json.JSONDecodeError:
-        print("❌ Invalid JSON")
+        print(" Invalid JSON")
         return JsonResponse({
             "decision": "BLOCK",
             "category": "invalid_request",
@@ -89,11 +88,12 @@ def classify_intent(request):
         }, status=400)
         
     except Exception as e:
-        print(f"❌ Classification error: {str(e)}")
+        print(f"Classification error: {str(e)}")
         return JsonResponse({
             "decision": "REVIEW",
             "category": "classification_error",
             "confidence": 0.0,
             "reason": f"Error during classification: {str(e)}",
             "error": str(e)
+
         }, status=500)
