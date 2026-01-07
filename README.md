@@ -1,5 +1,7 @@
 # Agent-21: Sovereign Supply Chain & Revenue Intelligence
 
+# DEMO-VIDEO 👉: https://drive.google.com/file/d/1Dcekf53jha9UOHM3BMccHCI6i7e2AgrC/view?usp=sharing
+
 Agent-21 is a high-performance, AI-driven platform designed for supply chain optimization, revenue intelligence, and executive decision-making. It combines real-time data from a sovereign database with the power of Large Language Models (LLMs) to provide actionable insights, autonomous investigations, and multilingual support.
 
 ## 🚀 Key Features
@@ -37,6 +39,21 @@ Comprehensive visualization of company assets:
 ### 6. Advanced Resilience Features
 - **Self-Healing SQL**: AI-driven correction of failed database queries.
 - **Audit Trail**: Verifiable logs of every agent action and thought process for compliance.
+
+### 7. Market Intelligence & Survey Platform
+A specialized environment for deep-dive market research:
+- **Product Analysis**: Automated research into product-market fit, competitor benchmarks, and success probability.
+- **Pricing Insights**: AI-driven recommendation of optimal price points based on regional demand and competitor positioning.
+- **Competitive Landscape**: Visual breakdown of competitor strengths and vulnerabilities.
+
+### 8. Agentic Advertisement Automation
+Sovereign intelligence applied to growth marketing:
+- **Poster Generating**: Advertise the newly launched product by generating posters and sending to the target audience via emails to market it. 
+
+### 9. Omni-channel Engagement (Telegram & Social)
+Ensuring the AI is reachable where the customers are:
+- **Multilingual Telegram Bots**: Direct integration with Telegram for instant support and order tracking in any language.
+- **Social Media Presence**: Autonomous monitoring and engagement across major social platforms to maintain brand sentiment.
 
 ## 🛠️ Tech Stack
 
