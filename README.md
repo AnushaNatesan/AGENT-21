@@ -1,6 +1,8 @@
-# Agent-21: Sovereign Supply Chain & Revenue Intelligence
+# Agent-21
 
 # DEMO-VIDEO 👉: https://drive.google.com/file/d/1Dcekf53jha9UOHM3BMccHCI6i7e2AgrC/view?usp=sharing
+
+# Agent-21: Sovereign Supply Chain & Revenue Intelligence
 
 Agent-21 is a high-performance, AI-driven platform designed for supply chain optimization, revenue intelligence, and executive decision-making. It combines real-time data from a sovereign database with the power of Large Language Models (LLMs) to provide actionable insights, autonomous investigations, and multilingual support.
 
@@ -8,12 +10,12 @@ Agent-21 is a high-performance, AI-driven platform designed for supply chain opt
 
 ### 1. Sovereign Intelligence (Agent-21)
 The core of the platform is an autonomous AI agent capable of:
-- **Retrieval-Augmented Generation (RAG)**: Querying company-specific data (weather, products, logistics) to provide accurate answers.
 - **Autonomous Tools**: Restocking inventory, sending mitigation emails, and executing database queries without human intervention.
-- **Multilingual Support**: Real-time bi-directional translation (powered by specialized APIs) allowing users to interact in their native language while the agent processes data in English.
+- **Multilingual Support**: Real-time bi-directional translation allowing users to interact in their native language while the agent processes data in English.
+
 
 ### 2. Executive War Room
-A high-stakes boardroom simulator where AI personas (CEO, Chief Risk Officer, Head of Logistics, etc.) debate complex business scenarios.
+A high-stakes boardroom simulator where our agent personas (CEO, Chief Risk Officer, Head of Logistics, etc.) debate complex business scenarios.
 - **Animated Discussion**: Visual representation of the boardroom debate.
 - **Executive Reports**: Automatically generated reports with mitigation plans and recommended automations.
 
@@ -30,15 +32,15 @@ A dedicated autonomous agent (`run_ml_proactive_agent`) that continuously scans 
 - **Contextual Details**: Emails include specific IDs (Product, Order, Factory) and the exact statistical deviance found.
 - **Live Feed Integration**: Anomalies are streamed in real-time to the Business Dashboard for immediate executive action.
 
-### 5. Supply Chain Twin & Business Dashboard
+### 5. Business Dashboard
 Comprehensive visualization of company assets:
 - **Factory Performance**: Real-time tracking of efficiency and health.
 - **Logistics Monitoring**: Weather impact analysis on delivery routes.
 - **Market Insights**: Revenue leaderboards and category-wise market share distribution.
 
 ### 6. Advanced Resilience Features
-- **Self-Healing SQL**: AI-driven correction of failed database queries.
 - **Audit Trail**: Verifiable logs of every agent action and thought process for compliance.
+- **Self-Healing SQL**: AI-driven correction of failed database queries.
 
 ### 7. Market Intelligence & Survey Platform
 A specialized environment for deep-dive market research:
@@ -51,17 +53,17 @@ Sovereign intelligence applied to growth marketing:
 - **Poster Generating**: Advertise the newly launched product by generating posters and sending to the target audience via emails to market it. 
 
 ### 9. Omni-channel Engagement (Telegram & Social)
-Ensuring the AI is reachable where the customers are:
-- **Multilingual Telegram Bots**: Direct integration with Telegram for instant support and order tracking in any language.
+Ensuring the Agent is reachable where the customers are:
+- **Multilingual Telegram Bots and call-based customer care**: Direct integration with phone calls or Telegram for instant support and order tracking in any language.
 - **Social Media Presence**: Autonomous monitoring and engagement across major social platforms to maintain brand sentiment.
 
 ## 🛠️ Tech Stack
 
 - **Backend**: Django (Python), Django REST Framework
 - **Frontend**: Vanilla HTML5, Modern CSS (Glassmorphism), JavaScript
-- **AI/LLM**: Google Gemini (gemini-1.5-flash), LangChain
+- **AI/LLM**: Google Gemini (gemini-1.5-flash),Mistral AI(local LLM),Stable diffusion(local image generation model)
+-**Anomaly Detection**: IsolationForest, Modified Z-Score (MAD), Data-driven thresholding (IQR-based), Rolling gradients and standard deviation analysis
 - **Database**: Supabase (PostgreSQL with real-time capabilities)
-- **Deployment**: Local dev server with external API integration
 
 ## 📦 Installation & Setup
 
@@ -111,8 +113,6 @@ The project relies on several key endpoints:
 
 For detailed information on technical implementations like Audit Trails and Digital Twins, see [ADVANCED_FEATURES_README.md](./ADVANCED_FEATURES_README.md).
 
-## 🛡️ License
-Proprietary Intelligence - Designed for SSN Trust HackSymmetric.
 
 
 # AGENT-21 Advanced Features Implementation
