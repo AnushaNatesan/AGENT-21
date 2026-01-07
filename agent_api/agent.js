@@ -60,7 +60,7 @@ app.post("/agent/query", async (req, res) => {
 
     console.log("➡️ Calling Reasoning Gate...");
 
-    const rgRes = await fetch("http://172.16.6.83:8000/api/reasoning_gate/", {
+    const rgRes = await fetch("<IP_FOR_APIENDPOINT>/api/reasoning_gate/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: user_query })
@@ -168,7 +168,7 @@ app.post("/agent/query", async (req, res) => {
 
     console.log("➡️ Executing Database Query...");
 
-    const dataRes = await fetch("http://172.16.6.83:8000/api/query/", {
+    const dataRes = await fetch("<IP_FOR_APIENDPOINT>/api/query/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: sql_query })
@@ -241,3 +241,4 @@ app.post("/agent/query", async (req, res) => {
 app.listen(3000, () => {
   console.log("🚀 Agent API running on http://localhost:3000");
 });
+
