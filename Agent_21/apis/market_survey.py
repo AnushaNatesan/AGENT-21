@@ -6,7 +6,7 @@ import google.generativeai as genai
 
 
 # Configure Gemini
-genai.configure(api_key="AIzaSyCA9B8n4T9uGYKqYtS8cxCDD7tucLP2XHQ")
+genai.configure(api_key="API_KEY")
 
 model = genai.GenerativeModel("models/gemini-2.5-flash")
 
@@ -70,7 +70,6 @@ Respond ONLY in valid JSON with this structure:
             }
         )
         print("Gemini response:", response.text)
-        # Gemini sometimes wraps JSON in markdown — clean it
         cleaned = response.text.strip().strip("```json").strip("```")
         research_json = json.loads(cleaned)
 
@@ -84,3 +83,4 @@ Respond ONLY in valid JSON with this structure:
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
