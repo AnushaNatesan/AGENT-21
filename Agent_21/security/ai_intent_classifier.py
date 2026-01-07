@@ -2,19 +2,12 @@
 Semantic Intent Classifier with Normalization
 Fast, local, adversarially robust guard layer
 """
-
-"""
-Simplified AI Intent Classifier
-"""
-
 import re
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# ============================================================
-# 🔧 TEXT NORMALIZATION
-# ============================================================
+# TEXT NORMALIZATION
 
 LEET_MAP = {
     "0": "o", "1": "i", "3": "e", "4": "a",
@@ -35,10 +28,7 @@ def normalize_text(text: str) -> str:
     
     return t.strip()
 
-# ============================================================
-# 🧠 INTENT CLASSIFIER
-# ============================================================
-
+# intent classifier
 class IntentClassifier:
     def __init__(self):
         print("🤖 Loading intent classifier...")
@@ -95,7 +85,7 @@ class IntentClassifier:
         
         # Encode all anchors
         self._encode_anchors()
-        print("✅ Intent classifier loaded")
+        print("Intent classifier loaded")
     
     def _encode_anchors(self):
         """Encode all anchor texts"""
@@ -181,11 +171,7 @@ class IntentClassifier:
                 "confidence": 0.0,
                 "reason": f"Classification error: {str(e)}"
             }
-
-# ============================================================
-# 🚀 SINGLETON
-# ============================================================
-
+# call 
 _intent_classifier = None
 
 def get_intent_classifier():
@@ -220,4 +206,5 @@ if __name__ == "__main__":
         print("Query:", q)
         print(guard.classify(q))
         print("-" * 60)
+
 '''
