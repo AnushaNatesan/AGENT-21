@@ -1,7 +1,3 @@
-# AGENT-21
-
-# DEMO VIDEO 👉: https://drive.google.com/file/d/1Dcekf53jha9UOHM3BMccHCI6i7e2AgrC/view?usp=sharing
-
 # Agent-21: Sovereign Supply Chain & Revenue Intelligence
 
 Agent-21 is a high-performance, AI-driven platform designed for supply chain optimization, revenue intelligence, and executive decision-making. It combines real-time data from a sovereign database with the power of Large Language Models (LLMs) to provide actionable insights, autonomous investigations, and multilingual support.
@@ -19,13 +15,26 @@ A high-stakes boardroom simulator where AI personas (CEO, Chief Risk Officer, He
 - **Animated Discussion**: Visual representation of the boardroom debate.
 - **Executive Reports**: Automatically generated reports with mitigation plans and recommended automations.
 
-### 3. Supply Chain Twin & Business Dashboard
+### 3. ML Anomaly Detection
+A multi-layered anomaly detection engine that monitors every facet of the supply chain using advanced statistical and machine learning techniques:
+- **Revenue Intelligence**: Uses `IsolationForest` to identify non-linear revenue spikes or drops.
+- **Logistics & Delivery**: Employs **Modified Z-Score (MAD)** for robust outlier detection in delivery delays.
+- **Factory & Inventory**: Data-driven thresholding (IQR-based) to detect throughput bottlenecks and stock instabilities.
+- **Market & Sentiment**: Tracks price volatility, sentiment drift, and sudden market share shifts using rolling gradients and standard deviation analysis.
+
+### 4. Proactive Notification System
+A dedicated autonomous agent (`run_ml_proactive_agent`) that continuously scans for the anomalies described above.
+- **Automated Alerts**: Instantly dispatches detailed email notifications to stakeholders upon detection.
+- **Contextual Details**: Emails include specific IDs (Product, Order, Factory) and the exact statistical deviance found.
+- **Live Feed Integration**: Anomalies are streamed in real-time to the Business Dashboard for immediate executive action.
+
+### 5. Supply Chain Twin & Business Dashboard
 Comprehensive visualization of company assets:
 - **Factory Performance**: Real-time tracking of efficiency and health.
 - **Logistics Monitoring**: Weather impact analysis on delivery routes.
 - **Market Insights**: Revenue leaderboards and category-wise market share distribution.
 
-### 4. Advanced Resilience Features
+### 6. Advanced Resilience Features
 - **Self-Healing SQL**: AI-driven correction of failed database queries.
 - **Audit Trail**: Verifiable logs of every agent action and thought process for compliance.
 
@@ -87,6 +96,7 @@ For detailed information on technical implementations like Audit Trails and Digi
 
 ## 🛡️ License
 Proprietary Intelligence - Designed for SSN Trust HackSymmetric.
+
 
 # AGENT-21 Advanced Features Implementation
 
