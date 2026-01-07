@@ -4,12 +4,10 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from supabase import create_client
 
-# Supabase client (SERVICE ROLE KEY ONLY)
-SUPABASE_URL = "https://ubvcncqceakcmosxjkpx.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVidmNuY3FjZWFrY21vc3hqa3B4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0NTAyODAsImV4cCI6MjA4MzAyNjI4MH0.k4HrBg0-s424zl1-em8Nj4vDLPRtFb6Ad8UxBIZM1m0"
+# Supabase client 
+SUPABASE_URL = <URL>
+SUPABASE_KEY = <KEY>
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-
 
 @csrf_exempt
 def insert_products(request):
@@ -57,3 +55,4 @@ def insert_products(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
