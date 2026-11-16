@@ -8,8 +8,8 @@ django.setup()
 
 from core.views import run_ml_proactive_agent, notify
 
-SUPABASE_URL = "<ENTER_SUPABASE_URL>"
-SUPABASE_KEY = "<ENTER_SUPABASE_API_KEY>"
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 
 # ---------- real async worker ----------
