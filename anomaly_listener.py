@@ -17,8 +17,8 @@ def build_suggestor_prompt(anomaly_type: str, anomaly_description: str) -> str:
     }
     return json.dumps(prompt)
 
-SUPABASE_URL = "https://ubvcncqceakcmosxjkpx.supabase.co"
-SUPABASE_KEY = "sb_publishable_mXdogYpuflKU5JDneBpQNw_fJfZZjlH"
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 
  
