@@ -15,9 +15,8 @@ from .agent_brain import AgentBrain
 agent_brain = AgentBrain()
 
 # ===== CONFIGURATION =====
-SUPABASE_URL = "https://izfvsrkgpdpkxmhqyfip.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6ZnZzcmtncGRwa3htaHF5ZmlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0NTc5NzMsImV4cCI6MjA4MzAzMzk3M30.7l90E0rIZeeB0hRst8ca18ZQmQBumQXlOaJEQxWFql0"
-
+SUPABASE_URL = <SUPABASE_URL>
+SUPABASE_KEY = <SUPABASE_APIKEY>
 # Initialize Supabase Client
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
