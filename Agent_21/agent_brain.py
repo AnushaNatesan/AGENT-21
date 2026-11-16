@@ -12,8 +12,8 @@ from supabase import create_client
 load_dotenv()
 
 # Load from environment or .env
-SUPABASE_URL = os.getenv("SUPABASE_URL", "https://izfvsrkgpdpkxmhqyfip.supabase.co")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6ZnZzcmtncGRwa3htaHF5ZmlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0NTc5NzMsImV4cCI6MjA4MzAzMzk3M30.7l90E0rIZeeB0hRst8ca18ZQmQBumQXlOaJEQxWFql0")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 @tool
