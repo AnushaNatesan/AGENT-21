@@ -8,8 +8,8 @@ django.setup()
 
 from core.views import automate_ad,advertise
 
-SUPABASE_URL = "<ENTER_SUPABASE_URL>"
-SUPABASE_KEY = "<ENTER_SUPABASE_APIKEY>"
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 
 # ---------- real async worker ----------
