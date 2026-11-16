@@ -6,7 +6,7 @@ import time
 # =========================
 SERP_API_KEY = os.getenv('SERP_API_KEY')
 SUPABASE_URL = os.getenv('SUPABASE_URL')
-SUPABASE_KEY = os.getenv('SUPABASE_API_KEY')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY')
 
 HEADERS = {
     "apikey": SUPABASE_KEY,
