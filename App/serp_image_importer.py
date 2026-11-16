@@ -4,9 +4,9 @@ import time
 # =========================
 # CONFIG
 # =========================
-SERP_API_KEY = "b16c64bd9806b4d13ab5cb855591ab097891721817eb86c927f421ce1eb34dfe"
-SUPABASE_URL = "https://ubvcncqceakcmosxjkpx.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVidmNuY3FjZWFrY21vc3hqa3B4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0NTAyODAsImV4cCI6MjA4MzAyNjI4MH0.k4HrBg0-s424zl1-em8Nj4vDLPRtFb6Ad8UxBIZM1m0"
+SERP_API_KEY = os.getenv('SERP_API_KEY')
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_API_KEY')
 
 HEADERS = {
     "apikey": SUPABASE_KEY,
