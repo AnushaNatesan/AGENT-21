@@ -35,9 +35,8 @@ pipe = StableDiffusionPipeline.from_pretrained(
 pipe.enable_attention_slicing()
 pipe.enable_vae_slicing()
 # --- Configuration ---
-SUPABASE_URL = "<SUPABASE_URL>"
-SUPABASE_KEY = "<SUPABASE_APIKEY>"
-
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 headers = {
     "apikey": SUPABASE_KEY,
